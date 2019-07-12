@@ -36,7 +36,7 @@
 <script>
 import $ from "jquery";
 import axios from "axios";
-import NavView from "../components/Nav.vue";
+import NavView from "../components/navtab";
 
 export default {
   data: function() {

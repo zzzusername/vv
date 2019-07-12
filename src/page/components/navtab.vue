@@ -122,7 +122,7 @@ export default {
                   parentId: 4,
                   index: "3-1",
                   title: "用户审核",
-                  url: "/Homemain/company",
+                  url: "/Homemain/usercheck",
                   description: "",
                   actionIdList: [],
                   children: []
@@ -132,7 +132,7 @@ export default {
                   parentId: 5,
                   index: "3-2",
                   title: "用户列表",
-                  url: "/Homemain/child",
+                  url: "/Homemain/userlist",
                   description: "",
                   actionIdList: [],
                   children: []
@@ -142,11 +142,165 @@ export default {
                   parentId: 6,
                   index: "3-3",
                   title: "权限组列表",
-                  url: "/Homemain/units",
+                  url: "/Homemain/authoritylist",
                   description: "",
                   actionIdList: [],
                   children: []
                 }
+              ]
+            },
+            {
+              id: 4,
+              parentId: 0,
+              index: "4",
+              title: "App管理",
+              url: "",
+              description: "",
+              actionIdList: [],
+              children: [
+                {
+                  id: 41,
+                  parentId: 1,
+                  index: "4-1",
+                  title: "App设置",
+                  url: "/Homemain/setapp",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 42,
+                  parentId: 2,
+                  index: "4-2",
+                  title: "轮播图列表",
+                  url: "/Homemain/slideshowlist",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 43,
+                  parentId: 3,
+                  index: "4-3",
+                  title: "APP模块管理",
+                  url: "/Homemain/appmodules",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 44,
+                  parentId: 4,
+                  index: "4-4",
+                  title: "用户注册设置",
+                  url: "/Homemain/setlogin",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+               /*  {
+                  id: 45,
+                  parentId: 5,
+                  index: "4-5",
+                  title: "一键报警类别",
+                  url: "/Homemain/policesort",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                }, */
+              ]
+            },
+            {
+              id: 5,
+              parentId: 0,
+              index: "5",
+              title: "视频管理",
+              url: "",
+              description: "",
+              actionIdList: [],
+              children: [
+                {
+                  id: 51,
+                  parentId: 1,
+                  index: "5-1",
+                  title: "视联分享",
+                  url: "/Homemain/videoshare",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+              ]
+            },
+            {
+              id: 6,
+              parentId: 0,
+              index: "6",
+              title: "资源管理",
+              url: "",
+              description: "",
+              actionIdList: [],
+              children: [
+                {
+                  id: 63,
+                  parentId: 3,
+                  index: "6-3",
+                  title: "GIS管理平台",
+                  url: "/Homemain/gisplatform",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 61,
+                  parentId: 1,
+                  index: "6-1",
+                  title: "监控资源列表",
+                  url: "/Homemain/resourcelist",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 62,
+                  parentId: 2,
+                  index: "6-2",
+                  title: "终端通讯录列表",
+                  url: "/Homemain/addresslist",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+              ]
+            },
+            {
+              id: 7,
+              parentId: 0,
+              index: "7",
+              title: "日志管理",
+              url: "",
+              description: "",
+              actionIdList: [],
+              children: [
+                {
+                  id: 71,
+                  parentId: 1,
+                  index: "7-1",
+                  title: "系统日志",
+                  url: "/Homemain/system",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
+                {
+                  id: 72,
+                  parentId: 2,
+                  index: "7-2",
+                  title: "用户操作日志",
+                  url: "/Homemain/userlog",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
               ]
             },
           ]

@@ -1,0 +1,165 @@
+
+/* 文本展示弹窗样式  #zDialogtext */
+#zDialogtext .block{
+	margin-bottom: 20px;
+    padding: 2px 4px;
+    background: #4a567c;;
+	overflow: hidden;
+}
+#zDialogtext .block li{
+	float: left;
+	width: 100%;
+}
+#zDialogtext .liL{
+	width: 40%;
+	text-align: right;
+    float: left;
+    font-size: 14px;
+    color: #fff;
+    padding: 0 12px 0 0;
+    box-sizing: border-box;
+    background: #1b274c;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px solid #3b4872;
+}
+#zDialogtext .liR{
+	float: left;
+    width: 60%;
+    -webkit-appearance: none;
+    background-color: #2a3558;
+    background-image: none;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #eee;
+    font-size: inherit;
+    outline: 0;
+    padding: 0 15px;
+    line-height: 36px;
+    margin: 2px 0;
+    border: 1px solid #3b4872;
+}
+#zDialogtext .userBtn{
+	text-align: right;
+}
+/* zPage */
+.zPage{
+    margin-top: 50px;
+}
+
+.block .el-input__inner{
+    height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px solid #3b4872;
+}
+/* 弹窗上传样式集合 */
+#upLoadpop .el-form-item__label{
+    margin: 2px 0;
+    line-height: 80px;
+    background: #1b274c;
+    border: 1px solid #3b4872;
+}
+#upLoadpop .filebtn{
+    float: left;
+    color: #fff;
+    width: 90px;
+    height: 36px;
+    background: #4a567c;
+    border-radius: 3px;
+    position: absolute;
+    z-index: 19;
+    line-height: 36px;
+    text-align: center;
+    left: 0;
+    top: 0;
+}
+#upLoadpop .el-form-item__content{
+    width: 84%;
+}
+#upLoadpop .uploadBg{
+    width: 100%;
+    height: 80px;
+    margin: 2px 0;
+    text-align: left;
+    line-height: 44px;
+    padding-left: 10px;
+    background: #2a3558;
+    border: 1px solid #3b4872;
+}
+#upLoadpop .filegroup{
+    overflow: hidden;
+}
+#upLoadpop .iptvImg{
+    margin-right: 10px;
+    margin-top: 15px;
+    float: left;
+    width: 100px;
+    height: 60px;
+    overflow: hidden;
+}
+#uploadForm{
+    float: left;
+    width: 60%;
+    margin-top: 7px;
+    display: block;
+    overflow: hidden;
+}
+#uploadForm .formLeft{
+    float: left;
+    width: 60%;
+    height: 36px;
+    overflow: hidden;
+    margin-top: 16px;
+    position: relative;
+}
+#uploadForm .formRight{
+    float: left;
+    overflow: hidden;
+    margin-top: 16px;
+}
+#upLoadpop .fileUpbtn{
+    float: left;
+    color: #fff;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    background: #4a567c;
+    border-radius: 3px;
+    line-height: 36px;	
+    text-align: center;
+}
+#files{
+    position: relative;
+    top: -4px;
+    left: 29px;
+}
+
+
+/* 日期控件样式修改 */
+/* .timeBox {
+    float: left;
+    width: 198px;
+    margin: 0 20px 0 3px;
+}
+.el-scrollbar__wrap{
+    background: #2e3859;
+}
+.time-select-item.selected:not(.disabled) {
+    color: #31f394;
+    font-weight: 700
+}
+
+.time-select-item.disabled {
+    color: #8b8d90;
+    cursor: not-allowed
+}
+
+.time-select-item:hover {
+    background-color: #2e3859;
+    font-weight: 700;
+    cursor: pointer
+}
+.el-picker-panel{
+    border: 1px solid #2e3859;
+} */

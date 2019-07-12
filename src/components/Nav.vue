@@ -121,12 +121,22 @@
             "actionIdList": [115],
             "children": []
           },
+          {
+            "id": 17,
+            "parentId": 7,
+            "index": "1-10",
+            "title": "APP模块管理",
+            "url": "/Home/APPModule",
+            "description": "APP模块管理",
+            "actionIdList": [115],
+            "children": []
+          },
 			{
 				"id": 15,
 				"parentId": 7,
 				"index": "1-10",
 				"title": "反馈管理",
-				"url": "",
+				"url": "/Home/Feedback",
 				"description": "反馈管理",
 				"actionIdList": [115],
 				"children": []
@@ -159,24 +169,6 @@
 				"description": "辅助服务器",
 				"actionIdList": [80, 152],
 				"children": []
-			}, {
-				"id": 34,
-				"parentId": 8,
-				"index": "1-30",
-				"title": "监控资源列表",
-				"url": "/Home/UserStatusDetial",
-				"description": "监控资源列表",
-				"actionIdList": [116, 117],
-				"children": []
-			}, {
-				"id": 42,
-				"parentId": 8,
-				"index": "1-40",
-				"title": "终端通讯录列表",
-				"url": "/Home/BoxStatusDetail",
-				"description": "终端通讯录列表",
-				"actionIdList": [136, 137],
-				"children": []
 			}]
 		},
 		 {
@@ -188,21 +180,12 @@
 			"description": "",
 			"actionIdList": [],
 				"children": [{
-				"id": 20,
+				"id": 51,
 				"parentId": 9,
 				"index": "1-10",
-				"title": "系统日志",
-				"url": "",
-				"description": "系统日志",
-				"actionIdList": [115],
-				"children": []
-			},{
-				"id": 21,
-				"parentId": 9,
-				"index": "1-10",
-				"title": "用户操作日志",
-				"url": "",
-				"description": "用户操作日志",
+				"title": "管理员操作日志",
+				"url": "/Home/AdministratorLog",
+				"description": "管理员操作日志",
 				"actionIdList": [115],
 				"children": []
 			},

@@ -6,7 +6,7 @@
 
 
 
-				<button @click="queryVersionList(false)">查询</button><button @click="getVersionList(true)">全部</button>
+				<button @click="queryVersionList(false)">查询</button><button @click="getVersionList('','all')">全部</button>
 				<span class="btnRight"> <button @click="addUp">新增</button></span>
 			</div>
 			<div class="zTable">
@@ -15,46 +15,30 @@
 						<div class="scrollbox">
 							<el-table ref="multipleTable"
                             :data="tableData3" style="width: 100%">
-								<!-- <el-table-column type="selection" @selection-change="changeFun"></el-table-column>
-								<el-table-column type="index" label="序号"></el-table-column> -->
+
 									<el-table-column prop="version" label="版本号"></el-table-column>
-                <el-table-column prop="createtime" label="上传时间">
+                <el-table-column prop="upload_time" label="上传时间">
+                </el-table-column>
+                <el-table-column prop="release_time" label="发布时间">
 
                 </el-table-column>
-                <el-table-column prop="createtime" label="发布时间">
-
-                </el-table-column>
-						<!--<el-table-column prop="operating_system" label="操作系统"></el-table-column>-->
 
 								<el-table-column prop="createtime" label="是否发布">
                                     <template slot-scope="scope">
-										<span v-if="scope.row.enabled == true">是</span>
+										<span v-if="scope.row.released == true">是</span>
 										<span v-else>否</span>
 									</template>
                                 </el-table-column>
-                                <!--<el-table-column prop="force_upgrade_time" label="强制时间">-->
-
-								<!--</el-table-column>-->
-
-								<!--<el-table-column prop="usable_range" label="版本类型">-->
-                                     <!--<template slot-scope="scope">-->
-										<!--<span v-if="scope.row.isCurrentUse == PUBLIC">公共</span>-->
-										<!--<span v-else>个人</span>-->
-									<!--</template>-->
-                                <!--</el-table-column>-->
 
 								 <el-table-column label="操作">
 							<template slot-scope="scope">
-								<a href="javascript:;" class="ml5">
-		                       <!-- <span  @click="edit(scope.row)">编辑</span> -->
-		                        <img @click="edit(scope.row)"  src="../../assets/edit2.png" alt="">
-		                         </a>
+
+                <a href="javascript:;"  class="ml5" @click="detailsclick(scope.row)" ><span >详情</span></a>
+                <a href="javascript:;"  class="ml5"  v-show="!scope.row.released" @click="release_h5_upgrade(scope.row)"><span >发布</span></a>
+                <a :href="scope.row.file_url" :download="scope.row.qiniu_key" class="ml5"  ><span >下载</span></a>
 
 	                             <a href="javascript:;"  class="ml5" @click="deletelist(scope.row)" >
-			                      <span >删除</span>
-		                          <!-- <img @click="moveDown(scope.row)" class="moveIco" src="../../assets/up.png" alt=""> -->
-
-		                        </a>
+			                      <span >删除</span></a>
                              </template>
 						</el-table-column>
 
@@ -68,45 +52,12 @@
 		</div>
 
 		<div id="UpgradeAddModel">
-			<el-dialog :close-on-click-modal="false" title="应用升级 - 新增" :visible.sync="dialogTableVisibleadd">
+			<el-dialog :close-on-click-modal="false" title="H5升级 - 新增" :visible.sync="dialogTableVisibleadd">
 				<el-form :model="add" ref="add" label-width="38%" class="demo-ruleForm">
 					<div class="formTable">
-						<div class="block">
-							<el-form-item label="版本号：" :rules="[{ required: true, message: ' '}]" prop="VersionNum">
-								<el-input v-model="add.VersionNum" maxlength="50"></el-input>
-							</el-form-item>
-							<!-- <div class="infoMsg">
-								<img src="../../assets/info.png"> -->
-								<!-- <span>根据需要修改密码，留空不修改密码</span> -->
-							<!-- </div> -->
-						</div>
-						<div class="block">
-							<el-form-item label="操作系统" :rules="[{ required: true, message: ' '}]" prop="name">
-								<el-select v-model="add.usable_range"  @change="geterminalType" placeholder="--请选择--">
-									<el-option v-for="item in options_system" :key="item.index" :label="item.value" :value="item"></el-option>
-								</el-select>
-							</el-form-item>
-						</div>
 
-						<div class="block">
-							<el-form-item label="上传方式：" :rules="[{ required: true, message: ' '}]" prop="name">
-								<el-select v-model="add.uploadType" @change="getval" placeholder="--请选择--">
-									<el-option v-for="item in options" :key="item.index" :label="item.value" :value="item.key"></el-option>
-								</el-select>
-							</el-form-item>
-						</div>
-						<!-- <div class="block filePath">
-							<el-form-item label="上传目录：" :rules="[{ required: true, message: ' '}]" prop="name">
-								<el-input v-model="add.UploadPath" maxlength="250" readonly></el-input>
-							</el-form-item>
-						</div> -->
-						<div class="block UploadPath">
-							<el-form-item label="文件地址" :rules="[{ required: true, message: ' '}]" prop="filePath">
-								<el-input v-model="add.FilePath" maxlength="250"></el-input>
-							</el-form-item>
-						</div>
 						<div class="upload upload2">
-							<el-form-item label="上传文件：" :rules="[{ required: true, message: ' '}]" prop="name">
+							<el-form-item label="上传H5文件：" :rules="[{ required: true, message: ' '}]" prop="name">
 								<div class="uploadBg">
 									<div class="filegroup">
 										<form id="uploadForm" enctype="multipart/form-data" style="width:45%; margin-top: 0;">
@@ -122,63 +73,19 @@
 							</el-form-item>
 						</div>
 							<div class="block">
-							<el-form-item label="强制升级" :rules="[{ required: true, message: ' '}]" prop="name">
+							<el-form-item label="是否发布" :rules="[{ required: true, message: ' '}]" prop="name">
 								  <el-radio-group v-model="enabled" @change="enabledlick" >
 
 
-								  <el-radio    label= "0">是</el-radio>
+								  <el-radio  label= "0">是</el-radio>
 									<el-radio  label="1">否</el-radio>
 								 </el-radio-group>
 
 
 							</el-form-item>
 					 </div>
-					 	<div class="textarealist ">
-							<div  class="formbox">
 
-							<el-form-item label="强制时间" label-width="19%" :rules="[{ required: true, message: ' '}]" prop="name">
-								<div class="formbox">
-								  <el-radio-group v-model="ptime" @change="usableclick"  >
-
-
-								 <el-radio  label="promptly">立即</el-radio>
-								 <el-radio  label="time">截至日期</el-radio>
-								 </el-radio-group>
-							       </div>
-
-							</el-form-item>
-
-								</div>
-						</div>
-
-						<div class="textarealist1">
-							<div  class="formbox">
-
-							<el-form-item label="版本类型" label-width="19%" :rules="[{ required: true, message: ' '}]" prop="name">
-								<div class="formbox">
-								  <el-radio-group v-model="usable" @change="usableclick"  >
-
-
-								 <el-radio  label="INDIVIDUAL">个人</el-radio>
-								 <el-radio  label="PUBLIC">公共</el-radio>
-								 </el-radio-group>
-							       </div>
-
-							</el-form-item>
-
-								</div>
-						</div>
-						<div class="textarea">
-							<div  class="formbox">
-
-
-							<el-form-item label="预览用户" label-width="19%" :rules="[{ required: true, message: ' '}]">
-								<el-input type="textarea" v-model="add.associated_users" resize="none" maxlength="1000" placeholder="请输入预览用户手机号，使用 ；隔开"></el-input>
-							</el-form-item>
-
-								</div>
-						</div>
-							<div class="textarea">
+            <div class="textarea">
 							<div  class="formbox">
 
 
@@ -198,11 +105,65 @@
 				</el-form>
 			</el-dialog>
 		</div>
+         <div id="UpgradeEditModel">
+		<el-dialog :close-on-click-modal="false" title="H5升级 - 详情" :visible.sync="dialogTableVisibledetails">
+			<el-form :model="details" ref="add" label-width="38%" class="demo-ruleForm">
+			<div class="formTable">
+
+				<div class="upload upload2">
+				<el-form-item label="上传H5文件：" :rules="[{ required: true, message: ' '}]" prop="name">
+					<div class="uploadBg">
+					<div class="filegroup" v-html="details.file_url">
+
+						<!--<input  class="zInput" type="text" placeholder="" />-->
+
+					</div>
+					</div>
+				</el-form-item>
+				</div>
+
+				<div class="upload upload2">
+				<el-form-item label="是否发布：" :rules="[{ required: true, message: ' '}]" prop="name">
+					<div class="uploadBg">
+					<span v-if="details.released == true">&nbsp;&nbsp;发布</span>
+					<span v-else>&nbsp;&nbsp;未发布</span>
+					</div>
+				</el-form-item>
+				</div>
+				<div class="upload upgrade Upgradelist " style="height: 150px">
+				<el-form-item   height=150  label="版本更新说明：" :rules="[{ required: true, message: ' '}]" prop="name">
+					<div class="uploadBg" style="height: 150px">
+					<div class="filegroup" v-html="details.upgrade_instructions">
+
+
+					</div>
+					</div>
+				</el-form-item>
+				</div>
+
+          </div>
+          <div class="userBtn2">
+            <el-form-item>
+             
+              <el-button @click="addCancel">关闭</el-button>
+            </el-form-item>
+          </div>
+        </el-form>
+      </el-dialog>
+    </div>
 	</div>
 </template>
 <script>
 	import $ from 'jquery'
 	import axios from 'axios'
+	 import {
+		  Upgradeadd_h5_upgrade_info,
+		  Upgradeget_h5_upgrade_info,
+          Upgradelist_h5_upgrade_infos,
+          Upgradedelete_h5_upgrade_info,
+          Upgraderelease_h5_upgrade_info,
+          Upgradeupload_h5_package
+          } from '@/components/interface/AppManagement.js';
 	var page = 0;
 	var totalNum = false,
 		count = 0;
@@ -214,7 +175,8 @@
 	export default {
 		data() {
 			return {
-				enabled:"1",
+
+				enabled:"0",
 				usable:"PUBLIC",
 				ptime:"promptly",
 
@@ -235,16 +197,14 @@
 				checked: false,
 				multipleSelection: [],
 				dialogTableVisibleadd: false,
+        dialogTableVisibledetails: false,
 				TerminaInformation: false,
 				filedata: '',
+        details:{
+
+        },
 				add: {
-					VersionNum: '',//版本
-					TerminalTypeName: '请选择',//操作系统
-				    UploadType: '',//上传方式：
-					FilePath: '',//文件地址
-				    force_upgrade_time:'',//升级时间
-					usable_range: '0',//操作系统
-					associated_users:"",//浏览用户
+					
 					FilePath:"",//文件地址
 
 
@@ -256,46 +216,9 @@
 					clientKey: localStorage.clientKey,
 					token: localStorage.token
 				},
-				options: [{
-						key: "1",
-						value: "文件上传"
-					},
-					{
-						key: "2",
-						value: "手动输入"
-					}
-				],
-				options_system: [{
-						key: "1",
-						value: "ANDROID"
-					},
-					{
-						key: "2",
-						value: "IOS"
-					}
-				],
-				options_enabled:[{
-						key: "1",
-						value: "是",
-						name:true
-					},
-					{
-						key: "2",
-						value: "否",
-						name:false
-					}
-				],
-				options_version: [{
-						key: "1",
-						value: "公共",
-						name:"PUBLIC"
-					},
-					{
-						key: "2",
-						value: "个人",
-						name:"INDIVIDUAL"
-					}
-				],
+
+
+
 			    options2:[
 				],
 
@@ -317,9 +240,8 @@
 				hei = document.documentElement.clientHeight;
 				$('.mRightTwo').css('height', hei - 178);
 			})
-			this.getVersionList(false);
-			this.getTerminalType();
-			// this.getselect();
+			this.getVersionList("","");
+
 			$('.UploadPath').css('display', 'none');
 		},
 		methods: {
@@ -331,18 +253,13 @@
 				this.TerminaInformation = true;
 				// this.getselect()
 			},
-			clickSelect(val) {
+      detailsclick(row){
+			  this.dialogTableVisibledetails=true;
+			  this.details=row
 
-				console.log(val);
-			},
-			clickSelect2(val) {
 
-				console.log(val);
-			},
-			clickSelect3(val) {
+      },
 
-				console.log(val);
-			},
 			addUp() { //打开新增lkj
 
 				this.percentage = 0
@@ -410,211 +327,131 @@
 			addSubmit() { //新增
 			     console.log(this.add)
 				var flag = true;
-				if(this.add.VersionNum == '') {
+				if(this.add.Remark == '') {
 					this.$message({
 						message: '版本号不允许为空',
 						type: 'warning'
 					});
 					flag = false;
 				}
+			
+		
+				if(flag){
+					var _this=this;
+					var add_h5={
+							"h5_package_file_temp_path":_this.FilePath,
+							"released": (this.enabled=="0")?true:false,
+							"upgrade_instructions":_this.add.Remark
+							}
 
-				if(this.add.TerminalTypeName == '请选择'){
-					this.$message({
-						message: '请选择终端类型',
-						type: 'warning'
-					});
-					flag = false;
+                    Upgradeadd_h5_upgrade_info(add_h5).then(function (res) {
+
+							if (res.status === 200 && res.data.result == "ok") {
+
+								var response = res
+								_this.$message({
+								message: "新增成功",
+								type: "success"
+								});
+								_this.dialogTableVisibleadd=false;
+								_this.getVersionList("",'');
+
+
+
+
+							}
+							if (res.data.result == "error") {
+								_this.$message({
+								message: res.data.error_description,
+								type: 'warning'
+								});
+								console.log(res);
+							}
+
+
+							}).catch(function (error) {
+							console.log(error);
+							});
+
+
 				}
-				if(this.FileType <= 0){
-					this.$message({
-						message: '请选择上传方式',
-						type: 'warning'
-					});
-					flag = false;
-				}
+
+
 
 			},
-			getTerminalType() { //终端类型列表lkj
-				let _this = this;
-				let URL = window.ServerUrl;
-				this.$http.get(URL + '/api/Provider/TerminalType?PageIndex=1&PageSize=100&SearchKey=&ClientKey=' + localStorage.clientKey + '&Token=' + localStorage.token + '').then(function(res) {
-					console.log(res.data)
-					_this.reLogin(res.data.code);//提示帐号登陆
-					let response = res.data.data;
-					_this.terminalList = response.terminalTypeList;
-					console.log(11111111111111111)
-					console.log(_this.terminalList)
 
-				}).catch(function(error) {
-					console.log(error);
-				});
-			},
-			// getselect() { //终端类型下拉框lkj
-			// 	this.options2 = [];
-			// 	var URL = window.ServerUrl;
-			// 	let _this = this;
-			// 	let selDate = {
-			// 		ClientKey: localStorage.clientKey,
-			// 		Token: localStorage.token,
-			// 		dataType: "TerminalType",
-			// 	}
+	        
 
-			// 	axios.post(URL + '/api/Provider/DropDown', selDate).then(function(res) {
-			// 		_this.options2 = []
-			// 		console.log(res.data.data.items)
-			// 		let response = res.data.data.items;
-			// 		_this.options2 = response;
-
-			// 		console.log(_this.options2)
-			// 	}).catch(function(error) {
-			// 		console.log(error);
-			// 	});
-			// },
-			getVersionList(isall) {
-				this.value = ""
-				let _this = this;
-				let URL = window.ServerUrl;
-				var pageSize = this.pagesize,
-					pagenumber = this.pagenumber-1;
-                var terminalType = '';
-                var par={
-                        // "is_force_upgrade": true,
-                        // "operating_system": "ANDROID",
-                        "page_number": pagenumber,
-                        "page_size": pageSize,
-                        // "usable_range": "PUBLIC",
-                        // "version": "1.1.2"
-                        }
-
-				this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/list_app_upgrade_infos',par ).then(function(res) {
-
-
-			if(res.status===200&&res.data.result=="ok"){
-
-                    let response = res.data.data.list;
-        for (var i = 0; i < response.length; i++) {
-          response[i].createtime = _this.timestampToTime(response[i].createtime)
-          if (response[i].force_upgrade_time) {
-            response[i].isupgrade = true
-            response[i].force_upgrade_time = _this.timestampToTime(response[i].force_upgrade_time)
-
-
-          } else {
-            response[i].isupgrade = false
-          }
-          console.log(response[i].createtime)
+      //获取列表数据
+      getVersionList(isall,all) {
+        this.zInput = ""
+        let _this = this;
+        let URL = window.ServerUrl;
+        var pageSize = this.pagesize,
+          pagenumber = this.pagenumber - 1;
+        var terminalType = '';
+        var par = {
+          "page_number": pagenumber,
+          "page_size": pageSize,
+          "version": isall
         }
 
-                    _this.tableData3=response
+       Upgradelist_h5_upgrade_infos(par).then(function (res) {
 
-					console.log( _this.tableData3)
-					}
-					if(res.data.result=="error"){
-						_this.$message({
-				message: res.data.error_description,
-				type: 'warning'
-			});
-						 console.log(res);
-					}
 
-				}).catch(function(error) {
-					console.log(error);
-				});
-			},
+          if (res.status === 200 && res.data.result == "ok") {
+            if(isall===''){
+              if(all=="all"){
+                _this.$message({
+                  message: "全部数据",
+                  type: "success"
+                });
+
+              }
+            }else{
+              _this.$message({
+                message: "查询完成",
+                type: "success"
+              });
+
+            }
+
+			let response = res.data.data.list;
+			 for (var i in response) {
+				  response[i].upload_time = _this.timestampToTime(response[i].upload_time)
+			
+			
+			  if(response[i].release_time!=undefined)
+             
+                 response[i].release_time = _this.timestampToTime(response[i].release_time)
+            }
+
+            _this.tableData3 = response
+
+            console.log(_this.tableData3)
+          }
+          if (res.data.result == "error") {
+            _this.$message({
+              message: res.data.error_description,
+              type: 'warning'
+            });
+            console.log(res);
+          }
+
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
 			queryVersionList(isall) {
-				if(this.value === ''&&this.zInput===""&&this.value2 === ''&&this.value3 === '') {
-					this.$message({
-						message: '请选择查询项',
-						type: 'warning'
-					});
-				} else {
-					let _this = this;
-					let URL = window.ServerUrl;
-					var pageSize = this.pagesize,
-						pagenumber = this.pagenumber-1;
-					var terminalType = '';
-					// var upgrade
-					// var range
-
-						  var par={
-                        // "is_force_upgrade": upgrade,
-                        // "operating_system": this.value,
-                        "page_number": pagenumber,
-                        "page_size": pageSize,
-                        // "usable_range": range,
-                        // "version": this.zInput
-                        }
-					// if(!isall) {
-					// 	terminalType = this.value;
-					// }
-
-					if(this.zInput==""){
-
-					}else{
-						par.version= this.zInput
-					}
-					if(this.value!=""){
-						par.operating_system=this.value
-
-					}
-
-					if(this.value2===""){
-
-					}else if(this.value2=='是'){
-						par.is_force_upgrade=true
-
-					}else{
-						par.is_force_upgrade=false
-					}
-
-					if(this.value3==""){
-
-					}else if(this.value3=="公共"){
-						par.usable_range="PUBLIC"
-
-
-					}else{
-						par.usable_range="INDIVIDUAL"
-					}
-
-				this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/list_app_upgrade_infos',par ).then(function(res) {
-
-
-			if(res.status===200&&res.data.result=="ok"){
-
-                    let response = res.data.data.list;
-        for (var i = 0; i < response.length; i++) {
-          response[i].createtime = _this.timestampToTime(response[i].createtime)
-          if (response[i].force_upgrade_time) {
-            response[i].isupgrade = true
-            response[i].force_upgrade_time = _this.timestampToTime(response[i].force_upgrade_time)
-
-
-          } else {
-            response[i].isupgrade = false
-          }
-          console.log(response[i].createtime)
+        if (this.zInput === "" ) {
+          this.$message({
+            message: '请选择查询项',
+            type: 'warning'
+          });
+        } else {
+          this.getVersionList(this.zInput)
         }
 
-                    _this.tableData3=response
-					_this.$message({
-				message: "查询完成",
-				type: 'success'
-			});
-
-					}
-					if(res.data.result=="error"){
-						_this.$message({
-				message: res.data.error_description,
-				type: 'warning'
-			});
-						 console.log(res);
-					}
-
-				}).catch(function(error) {
-					console.log(error);
-				});
-				}
 			},
 
 		   //上传文件框
@@ -681,18 +518,19 @@
 
 					  var sar=this.filedata
 				   var formData = new FormData();
-			formData.append("installation_package_file", sar);
+			formData.append("h5_package_file", sar);
 			  console.log(formData)
-				  this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/upload_installation_package',formData
-    ).then(function(res) {
+				  Upgradeupload_h5_package(formData).then(function(res) {
 
 
 			if(res.status===200&&res.data.result=="ok"){
 
 
-					let response = res.data.data.list;
-						console.log( res)
+						
 						_this.percentage=100
+						_this.FilePath=res.data.data.h5_package_file_temp_path
+						console.log(_this.FilePath )
+						
 
 
 						_this.$message({
@@ -709,6 +547,7 @@
 				type: 'warning'
 			});
 						 console.log(res);
+						    m.close()
 					}
 
 				}).catch(function(error) {
@@ -719,85 +558,44 @@
 			  }
 
 			},
-            // UploadFile(TargetFile) {
-			// 	let _this = this;
-			// 	var FileChunk = [];
-			// 	var chunk;
-			// 	var file = TargetFile;
-			// 	var MaxFileSizeMB = 20;
-			// 	var BufferChunkSize = MaxFileSizeMB * (1024 * 1024);
-			// 	var ReadBuffer_Size = 1024;
-			// 	var FileStreamPos = 0;
-			// 	var EndPos = BufferChunkSize;
 
-			// 	if(file==undefined){
-			// 			_this.$message({
-			// 				message: '文件不允许为空',
-			// 				type: 'warning'
-			// 			});
-			// 			return false
-			// 	}
-			// 		var Size = file.size;
-			// 	//获取时间戳给文件重命名
-			// 	var timestamp = new Date().getTime();
-			// 	var index1=file.name.lastIndexOf(".");
-			// 	var postf=file.name.substring(index1,file.name.length);//获取后缀名
-			// 	var newFileName=timestamp+postf;
+            // //最终上传
+			// UploadFileChunk(Chunk, FileName,totalParts,newFileName) {
+			// 	fileChange = true;
 
-			// 	while(FileStreamPos < Size) {
-			// 		FileChunk.push(file.slice(FileStreamPos, EndPos));
-			// 		FileStreamPos = EndPos;
-			// 		EndPos = FileStreamPos + BufferChunkSize;
-			// 	}
-			// 	var TotalParts = FileChunk.length;
-			// 	_this.TotalParts = TotalParts;
-			// 	var PartCount = 0;
-			// 	indexCount=0;
-			// 	while((chunk = FileChunk.shift())) {
-			// 		PartCount++;
-			// 		var FilePartName = newFileName + ".part_" + PartCount + "." + TotalParts;
-			// 		_this.UploadFileChunk(chunk, FilePartName,TotalParts,newFileName);
-			// 	}
+			// 	this.$message({
+			// 		message: "上传开始",
+			// 		type: "info"
+			// 	});
+			// 	var _this = this;
+			// 	let URL = ServerUrl;
+			// 	var fd = new FormData();
+			// 	fd.append("file", Chunk, FileName);
+			// 	axios.post(URL + "/super/admin/api/v1/app_upgrade_management/upload_installation_package", fd, {cancelToken:custom.token}).then(function(res) {
+			// 		console.log(res.data)
+			// 		// _this.reLogin(res.data.code); //提示帐号登陆
+			// 		var totalnumber = parseInt(_this.TotalParts);
+			// 			var tatalNum = 100/totalnumber
+			// 			count++;
+			// 		if(res.data.code === 0) {
+			// 			indexCount++;
+			// 			if(indexCount===totalParts){
+
+			// 			}
+
+			// 			_this.percentage = tatalNum*count
+
+			// 			console.log('我是进度条'+indexCount)
+			// 			console.log(tatalNum)
+			// 			if(_this.percentage > 100){
+			// 				_this.percentage=100
+			// 			}
+			// 			console.log(_this.percentage)
+			// 		}
+			// 	}).catch(function(error) {
+			// 		console.log(error);
+			// 	});
 			// },
-            //最终上传
-			UploadFileChunk(Chunk, FileName,totalParts,newFileName) {
-				fileChange = true;
-
-				this.$message({
-					message: "上传开始",
-					type: "info"
-				});
-				var _this = this;
-				let URL = ServerUrl;
-				var fd = new FormData();
-				// fd.append("clientKey", localStorage.clientKey);
-				// fd.append("token", localStorage.token);
-				fd.append("file", Chunk, FileName);
-				axios.post(URL + "/super/admin/api/v1/app_upgrade_management/upload_installation_package", fd, {cancelToken:custom.token}).then(function(res) {
-					console.log(res.data)
-					// _this.reLogin(res.data.code); //提示帐号登陆
-					var totalnumber = parseInt(_this.TotalParts);
-						var tatalNum = 100/totalnumber
-						count++;
-					if(res.data.code === 0) {
-						indexCount++;
-						if(indexCount===totalParts){
-
-						}
-
-						_this.percentage = tatalNum*count
-
-						console.log('我是进度条'+indexCount)
-						console.log(tatalNum)
-						if(_this.percentage > 100){
-							_this.percentage=100
-						}
-						console.log(_this.percentage)
-					}
-				}).catch(function(error) {
-					console.log(error);
-				});
-			},
 			// 文件上传结束
 			changeFun(val) { //复选框
 				this.multipleSelection = val;
@@ -812,7 +610,65 @@
 				page = this.pagenumber;
 				//this.getMenuInfoList();  //获取列表的函数
 				// console.log("search:"+this.value);
-				this.getVersionList(false);
+				this.getVersionList("" ,"");
+			},
+		//发布H5升级信息
+				release_h5_upgrade(index) { 
+			 console.log(index)
+				// var cheklength = this.multipleSelection;
+
+					this.$confirm('是否执行发布H5升级操作?', '消息', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						var str = [];
+						var _this = this;
+						let URL = window.ServerUrl;
+						// let cheklist = [];
+						// for(let i = 0; i < cheklength.length; i++) {
+						// 	cheklist.push(cheklength[i].versionID)
+						// 	console.log(cheklist)
+						// 	var strlist = cheklist.toString();
+						// }
+						var delDate = {
+							"version":index.version
+						}
+						console.log(delDate);
+					
+						Upgraderelease_h5_upgrade_info(delDate ).then(function(res) {
+
+
+			         if(res.status===200&&res.data.result=="ok"){
+
+								_this.$message({
+									message: '发布H5升级成功',
+									type: 'success'
+								});
+								_this.getVersionList("","");
+							} else {
+								 if (res.data.result == "error") {
+										_this.$message({
+										message: res.data.error_description,
+										type: 'warning'
+										});
+										console.log(res);
+									}
+
+							
+							
+							}
+						}).catch(function(error) {
+							console.log(error);
+						});
+
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消发布H5升级'
+						});
+					});
+
 			},
 			deletelist(index) { //删除
 			 console.log(index)
@@ -833,10 +689,10 @@
 						// 	var strlist = cheklist.toString();
 						// }
 						var delDate = {
-							"id":index.id
+							"version":index.version
 						}
 						console.log(delDate);
-						this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/delete_app_upgrade_info',delDate ).then(function(res) {
+						Upgradedelete_h5_upgrade_info(delDate ).then(function(res) {
 
 
 			         if(res.status===200&&res.data.result=="ok"){
@@ -845,7 +701,7 @@
 									message: '删除成功',
 									type: 'success'
 								});
-								_this.getVersionList();
+								_this.getVersionList("","delete");
 							} else {
 								if(res.data.code==window.code ) return;
 								_this.$message({
@@ -883,6 +739,9 @@
 			var addmodHei = $('#UpgradeAddModel .el-dialog').height();
 			$('#UpgradeAddModel .el-dialog').css('marginTop', -(addmodHei / 2));
 			$('#UpgradeAddModel .el-dialog').css('marginBottom', 0);
+      var addmodHeiedit = $('#UpgradeEditModel .el-dialog').height();
+      $('#UpgradeEditModel .el-dialog').css('marginTop', -(addmodHeiedit / 2));
+      $('#UpgradeEditModel .el-dialog').css('marginBottom', 0);
 			// $('.TerminaLeft li')
 			$(".TerminaLeft li").click(function(){
 				$(".TerminaLeft li").css('background', '')
@@ -926,7 +785,7 @@
 
 	}
 
-	#UpgradeAddModel #files {
+	#UpgradeAddModel #files,#UpgradeEditModel #files {
 		width: 90px;
 		height: 30px;
 		position: absolute;
@@ -1131,19 +990,7 @@
 	}
 </style>
 <style type="text/css">
-	#UpgradeAddModel .submit2 {
-		float: left;
-		color: #fff;
-		width: 80px;
-		height: 30px;
-		background: #4a567c;
-		border-radius: 3px;
-		position: absolute;
-		z-index: 19;
-		line-height: 30px;
-		text-align: center;
-		margin-top: 0px;
-	}
+
 
 .upload .uploadBg #uploadForm {
 		width: 45%;
@@ -1193,18 +1040,6 @@
 		/*top: 50%;*/
 	}
 
-	#UpgradeAddModel .el-dialog {
-		width: 1100px;
-		top: 50%;
-	}
-
-	#UpgradeAddModel .el-dialog__body {
-		padding: 24px 24px 18px;
-	}
-
-	#UpgradeAddModel .el-checkbox {
-		float: left;
-	}
 
 	.textarealist .el-form-item__label,
 
@@ -1233,36 +1068,80 @@
 		border: 1px #3b4872 solid;
 	}
 
+    #UpgradeEditMode .Upgradelist .el-form-item__label {
+		width: 18.2% !important;
+		height: 150px !important;;
+		margin: 2px 0;
+		line-height: 46px;
+		/* background: #2a3558; */
+		border: 1px #3b4872 solid;
+	}
+.upgrade .el-form-item__label {
+  width: 18.2% !important;
+  height: 150px;
+  margin: 2px 0;
+  line-height: 46px;
+  /* background: #2a3558; */
+  border: 1px #3b4872 solid;
+}
 	.upload .el-form-item__content {
 		width: 84%;
 		margin-left: 18.2% !important
 	}
-	#UpgradeAddModel .block .el-form-item__label {
+	#UpgradeAddModel .block .el-form-item__label,#UpgradeEditModel .block .el-form-item__label {
 		background: #1b274c;
 	}
 
-	#UpgradeAddModel .el-dialog .textarea .el-form-item__label {
+	#UpgradeAddModel .el-dialog .textarea .el-form-item__label,	#UpgradeEditModel .el-dialog .textarea .el-form-item__label {
 		height: 120px;
 		background: #1b274c;
 	}
-	#UpgradeAddModel .upload .el-form-item {
+	#UpgradeAddModel .upload .el-form-item ,#UpgradeEditModel .upload .el-form-item {
 		width: 95.5%;
 	}
 
-	#UpgradeAddModel .el-form-item {
+	#UpgradeAddModel .el-form-item,	#UpgradeEditModel .el-form-item  {
 		margin: 0;
 		padding: 0;
 		width: 91%;
 		float: left;
 	}
 
-	#UpgradeAddModel .userBtn2 .el-form-item {
+	#UpgradeAddModel .userBtn2 .el-form-item,
+  #UpgradeEditModel .userBtn2 .el-form-item{
 		width: 100%;
 	}
 
-	#UpgradeAddModel .el-textarea {
+	#UpgradeAddModel .el-textarea,#UpgradeAddModel .el-textarea  {
 		width: 106.2%;
 	}
+  #UpgradeAddModel .submit2,#UpgradeEditModel .submit2 {
+  float: left;
+  color: #fff;
+  width: 80px;
+  height: 30px;
+  background: #4a567c;
+  border-radius: 3px;
+  position: absolute;
+  z-index: 19;
+  line-height: 30px;
+  text-align: center;
+  margin-top: 0px;
+}
+
+#UpgradeAddModel .el-dialog,#UpgradeEditModel .el-dialog {
+  width: 1100px;
+  top: 50%;
+}
+
+#UpgradeAddModel .el-dialog__body,
+#UpgradeEditModel .el-dialog__body{
+  padding: 24px 24px 18px;
+}
+
+#UpgradeAddModel .el-checkbox,#UpgradeEditModel .el-checkbox{
+  float: left;
+}
 
 	.textarea .el-textarea__inner {
 		height: 120px;
@@ -1280,10 +1159,13 @@
 	.el-select {
 		width: 100%;
 	}
-
-	.el-textarea {
+.el-textarea {
+  float: left;
+  width: 92.2%;
+}
+	#UpgradeEditModel.el-textarea {
 		float: left;
-		width: 92.2%;
+		width: 96%;
 	}
 
 	.el-dialog__header span {

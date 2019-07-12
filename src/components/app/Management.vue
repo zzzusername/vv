@@ -389,6 +389,15 @@
 <script>
   import $ from 'jquery'
   import axios from 'axios'
+  import {getRegionsbyPid,getRegiondetail} from '@/components/interface/common.js';
+   import {Managementadd_app_upgrade,
+          Managementdelete_app_upgrade,
+          Managementget_app_upgrade,
+          Managementlist_app_upgrade_infos,
+          Managementmodify_app_upgrade_info,
+          Managementset_app_upgrade_info_enabled,
+          Managementupload_installation_package
+          } from '@/components/interface/AppManagement.js';
 
   var page = 0;
   var totalNum = false,
@@ -665,7 +674,7 @@
           "version": this.add.VersionNum
         }
 
-        startTime
+
         if (this.enabled == "0") {
           par.force_upgrade_time = this.startTime
 
@@ -715,8 +724,8 @@
           let _this = this;
           let URL = ServerUrl;
 
-
-          this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/add_app_upgrade_info', par).then(function (res) {
+//新增应用升级信息
+         Managementadd_app_upgrade(par).then(function (res) {
             console.log(res)
 
             if (res.status === 200 && res.data.result == "ok") {
@@ -763,27 +772,7 @@
           console.log(error);
         });
       },
-      // getselect() { //终端类型下拉框lkj
-      // 	this.options2 = [];
-      // 	var URL = window.ServerUrl;
-      // 	let _this = this;
-      // 	let selDate = {
-      // 		ClientKey: localStorage.clientKey,
-      // 		Token: localStorage.token,
-      // 		dataType: "TerminalType",
-      // 	}
-
-      // 	axios.post(URL + '/api/Provider/DropDown', selDate).then(function(res) {
-      // 		_this.options2 = []
-      // 		console.log(res.data.data.items)
-      // 		let response = res.data.data.items;
-      // 		_this.options2 = response;
-
-      // 		console.log(_this.options2)
-      // 	}).catch(function(error) {
-      // 		console.log(error);
-      // 	});
-      // },
+     //列出应用升级信息
       getVersionList(isall) {
         this.value = ""
         let _this = this;
@@ -800,7 +789,7 @@
           // "version": "1.1.2"
         }
 
-        this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/list_app_upgrade_infos', par).then(function (res) {
+       Managementlist_app_upgrade_infos(par).then(function (res) {
 
 
           if (res.status === 200 && res.data.result == "ok") {
@@ -893,7 +882,7 @@
             par.usable_range = "INDIVIDUAL"
           }
 
-          this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/list_app_upgrade_infos', par).then(function (res) {
+          Managementlist_app_upgrade_infos(par).then(function (res) {
 
 
             if (res.status === 200 && res.data.result == "ok") {
@@ -999,7 +988,7 @@
           var formData = new FormData();
           formData.append("installation_package_file", sar);
           console.log(formData)
-          this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/upload_installation_package', formData
+          Managementupload_installation_package(formData
           ).then(function (res) {
 
 
@@ -1036,85 +1025,9 @@
         }
 
       },
-      // UploadFile(TargetFile) {
-      // 	let _this = this;
-      // 	var FileChunk = [];
-      // 	var chunk;
-      // 	var file = TargetFile;
-      // 	var MaxFileSizeMB = 20;
-      // 	var BufferChunkSize = MaxFileSizeMB * (1024 * 1024);
-      // 	var ReadBuffer_Size = 1024;
-      // 	var FileStreamPos = 0;
-      // 	var EndPos = BufferChunkSize;
-
-      // 	if(file==undefined){
-      // 			_this.$message({
-      // 				message: '文件不允许为空',
-      // 				type: 'warning'
-      // 			});
-      // 			return false
-      // 	}
-      // 		var Size = file.size;
-      // 	//获取时间戳给文件重命名
-      // 	var timestamp = new Date().getTime();
-      // 	var index1=file.name.lastIndexOf(".");
-      // 	var postf=file.name.substring(index1,file.name.length);//获取后缀名
-      // 	var newFileName=timestamp+postf;
-
-      // 	while(FileStreamPos < Size) {
-      // 		FileChunk.push(file.slice(FileStreamPos, EndPos));
-      // 		FileStreamPos = EndPos;
-      // 		EndPos = FileStreamPos + BufferChunkSize;
-      // 	}
-      // 	var TotalParts = FileChunk.length;
-      // 	_this.TotalParts = TotalParts;
-      // 	var PartCount = 0;
-      // 	indexCount=0;
-      // 	while((chunk = FileChunk.shift())) {
-      // 		PartCount++;
-      // 		var FilePartName = newFileName + ".part_" + PartCount + "." + TotalParts;
-      // 		_this.UploadFileChunk(chunk, FilePartName,TotalParts,newFileName);
-      // 	}
-      // },
+      
       //最终上传
-      UploadFileChunk(Chunk, FileName, totalParts, newFileName) {
-        fileChange = true;
-
-        this.$message({
-          message: "上传开始",
-          type: "info"
-        });
-        var _this = this;
-        let URL = ServerUrl;
-        var fd = new FormData();
-        // fd.append("clientKey", localStorage.clientKey);
-        // fd.append("token", localStorage.token);
-        fd.append("file", Chunk, FileName);
-        axios.post(URL + "/super/admin/api/v1/app_upgrade_management/upload_installation_package", fd, {cancelToken: custom.token}).then(function (res) {
-          console.log(res.data)
-          // _this.reLogin(res.data.code); //提示帐号登陆
-          var totalnumber = parseInt(_this.TotalParts);
-          var tatalNum = 100 / totalnumber
-          count++;
-          if (res.data.code === 0) {
-            indexCount++;
-            if (indexCount === totalParts) {
-
-            }
-
-            _this.percentage = tatalNum * count
-
-            console.log('我是进度条' + indexCount)
-            console.log(tatalNum)
-            if (_this.percentage > 100) {
-              _this.percentage = 100
-            }
-            console.log(_this.percentage)
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
+    
       // 文件上传结束
       changeFun(val) { //复选框
         this.multipleSelection = val;
@@ -1153,7 +1066,7 @@
             "id": index.id
           }
           console.log(delDate);
-          this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/delete_app_upgrade_info', delDate).then(function (res) {
+         Managementdelete_app_upgrade(delDate).then(function (res) {
 
 
             if (res.status === 200 && res.data.result == "ok") {
@@ -1349,7 +1262,8 @@
 
 
 
-        this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/modify_app_upgrade_info', paredit).then(function (res) {
+        modify_app_upgrade_info
+(paredit).then(function (res) {
           console.log(res)
 
           if (res.status === 200 && res.data.result == "ok") {
@@ -1418,7 +1332,7 @@
 
 
 
-        this.$http.post(URL + '/super/admin/api/v1/app_upgrade_management/set_app_upgrade_info_enabled', enabled).then(function (res) {
+        Managementset_app_upgrade_info_enabled(enabled).then(function (res) {
           console.log(res)
 
           if (res.status === 200 && res.data.result == "ok") {
@@ -1634,7 +1548,7 @@
     margin-top: 2px;
 
   }
-  .timetab .timeBox {
+ #versionBox .formbox .timeBox {
     width: 200px;
     display: inline-block;
     margin-left: 30px;

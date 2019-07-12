@@ -19,9 +19,9 @@
   </el-dropdown-menu>
 </el-dropdown>
 				</span>
-				
+
 				<span class="out"><img @click="SignOut" src="../assets/out.png" /></span>
-			
+
 			</div>
 			<div class="indexlogo">移动终端管理平台</div>
 			<!-- <span><img src="../assets/logo2.png"/></span> -->
@@ -46,27 +46,27 @@
 								<el-input v-model="parameter.code" maxlength="50" id="corporate_name"></el-input>
 							</el-form-item>
 							<div id="logcode" @click="isshowinstallclick" v-html="countdown"> </div>
-							
-							
+
+
 						</div>
 						<div class="block">
 							<el-form-item label="新密码" :rules="[{ required: true, message: ' '}]" prop="Password1">
 								<el-input v-model="parameter.Password1" maxlength="120"  type="password"></el-input>
 							</el-form-item>
 						</div>
-						
+
 						<div class="block">
 							<el-form-item label="确认密码" :rules="[{ required: true, message: ' '}]" prop="Password2">
 								<el-input v-model="parameter.Password2" maxlength="120"  type="password"></el-input>
 							</el-form-item>
 						</div>
 						<div class="power">
-						
+
 						</div>
 					</div>
 					<div class="userBtn">
 						<el-form-item>
-							
+
 							<el-button @click="isshowinstall=false">关闭</el-button>
 							<el-button type="primary" @click="revise">修改</el-button>
 						</el-form-item>
@@ -76,7 +76,7 @@
 		</div>
 
 	</div>
-	
+
 </template>
 
 <script>
@@ -105,11 +105,11 @@
 			NavView,
 		},
 		 destroyed: function () {
-			 
+
 		  window.IsTips=false
 		  console.log('页面关闭了')
-		 
-    
+
+
  },
 		mounted() {
 			let URL = ServerUrl;
@@ -143,23 +143,23 @@
 					new_password:this.parameter.Password1,
 					phonenum: this.parameter.phone,
 					sms_verification_code: this.parameter.code,
-				
 
-				}	
+
+				}
 
 this.$http.post(URL + '/common/api/v1/auth/reset_password', reviseparameter).then(function(res) {
 		               console.log(res)
 					// _this.reLogin(res.data.code); //提示帐号登陆、
 					if(res.status===200&&res.data.result=="ok"){
-					
-					
+
+
 						this.isshowinstall=false;
-				
+
                 _this.$message({
 				message: "修改密码成功",
 				type: 'warning'
 			});
-			
+
 					}
 					if(res.data.result=="error"){
 						_this.$message({
@@ -167,7 +167,7 @@ this.$http.post(URL + '/common/api/v1/auth/reset_password', reviseparameter).the
 				type: 'warning'
 			});
 						 console.log(res);
-						 
+
 					}
 
 				}).catch(function(error) {
@@ -181,31 +181,31 @@ this.$http.post(URL + '/common/api/v1/auth/reset_password', reviseparameter).the
  				type: 'warning'
 			});
 				}
-			
+
 
 
 
 			},
 	isshowinstallclick(){
-		
+
 
 		var that=this
 				let _this = this;
 				let URL = ServerUrl;
-			
+
 				var userparameter={
 					 "phonenum":parseInt(this.parameter.phone),
 
-				}	
+				}
 if(this.issecond==60){
 	this.$http.post(URL + '/common/api/v1/auth/send_sms_verification_code_for_reset_password', userparameter).then(function(res) {
 					// _this.reLogin(res.data.code); //提示帐号登陆、
 					if(res.status===200&&res.data.result=="ok"){
-					
+
 						console.log(res)
-				
-                
-			
+
+
+
 					}
 					if(res.data.result=="error"){
 						_this.$message({
@@ -213,7 +213,7 @@ if(this.issecond==60){
 				type: 'warning'
 			});
 						 console.log(res);
-						 
+
 					}
 
 				}).catch(function(error) {
@@ -221,38 +221,38 @@ if(this.issecond==60){
 				});
 
         }
-	
 
-	
-           var flag = 1;  
 
-	
-	   this.issecond = this.issecond - 1; 
+
+           var flag = 1;
+
+
+	   this.issecond = this.issecond - 1;
 	   console.log(this.issecond)
 
         this.countdown=this.issecond+"秒后重新发送"
-      if ( this.issecond == 0) {  
+      if ( this.issecond == 0) {
         this.countdown="获取验证码"
-        flag = 1;  
-		this.issecond = 60;  
+        flag = 1;
+		this.issecond = 60;
 		//  clearInterval(myVar);
 
-        return;  
-       }  
+        return;
+       }
          var myVar = setTimeout(function(){ that.isshowinstallclick() }, 1000);
 
-				
-			
+
+
 
 	  },
-	
+
 			SignOut() {
-				this.$router.push({         
+				this.$router.push({
 							 path: "/"
         });
 
-        //               window.IsTips=false    
-					  
+        //               window.IsTips=false
+
 		// 		       console.log("我在退出"+ " window.IsTips="+window.IsTips)
 		// 		// localStorage.removeItem('Myitems')
 		// 		// alert(localStorage.userName)
@@ -267,19 +267,19 @@ if(this.issecond==60){
 		// 		axios.delete(URL + '/api/Provider/Logon', {
 		// 			data: delDate
 		// 		}).then(function(response) {
-		// 			  window.IsTips=false  
-		// 			 _this.reLogin(response.data.code); //提示帐号登陆      
+		// 			  window.IsTips=false
+		// 			 _this.reLogin(response.data.code); //提示帐号登陆
 		// 			if(response.data.code==0||response.data.code==window.code){
 		// 				 localStorage.clear();
-		// 				_this.$router.push({         
+		// 				_this.$router.push({
 		// 					 path: "/"
         // });
 
 		// 			}
 
-					
+
 		// 			console.log(response.data)
-		// 		}).catch(function(error) {	
+		// 		}).catch(function(error) {
 		// 			console.log(error);
 		// 		});
 
@@ -289,6 +289,24 @@ if(this.issecond==60){
 </script>
 
 <style type="text/css">
+  ::-webkit-scrollbar {
+    width: 12px;
+    /*滚动条宽度*/
+    height: 12px;
+    /*滚动条高度*/
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 5px;
+    /*滚动条的背景区域的圆角*/
+    background-color: #222d50;
+    /*滚动条的背景颜色*/
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    /*滚动条的圆角*/
+    background-color: #4f5c84;
+    /*滚动条的背景颜色*/
+  }
 #corporate_name{
 	width: 100%;
 }
@@ -306,7 +324,7 @@ if(this.issecond==60){
 		margin-top: 2px;
 		background: #1b274c;
 	}
-	
+
 	#installlog .textarea .el-textarea__inner,
 	#menuEditModel .textarea .el-textarea__inner {
 		height: 160px;
@@ -336,18 +354,18 @@ if(this.issecond==60){
 		line-height: 36px;
 		border: 1px #3b4872 solid;
 	}
-	
+
 	#menuEditModel .el-dialog__body,
 	#installlog .el-dialog__body {
 		padding: 24px 24px 18px;
 		height: 250px;
 	}
-	
+
 	#menuEditModel .el-checkbox,
 	#installlog .el-checkbox {
 		float: left;
 	}
-	
+
 	#menuEditModel .el-form-item,
 	#installlog .el-form-item {
 		margin: 0;
@@ -355,17 +373,17 @@ if(this.issecond==60){
 		width: 91%;
 		float: left;
 	}
-	
+
 	#menuEditModel .userBtn .el-form-item,
 	#installlog .userBtn .el-form-item {
 		width: 100%;
 	}
-	
+
 	#menuEditModel .el-textarea,
 	#installlog .el-textarea {
 		width: 106.2%;
 	}
-	
+
 	.el-textarea__inner {
 		height: 160px;
 		margin: 2px 0;
@@ -374,30 +392,30 @@ if(this.issecond==60){
 		border: 1px #3b4872 solid;
 		border-radius: 0;
 	}
-	
+
 	.el-date-editor.el-input {
 		width: 100%;
 	}
-	
+
 	.el-select {
 		width: 100%;
 	}
-	
+
 	.el-textarea {
 		float: left;
 		width: 92.2%;
 	}
-	
+
 	.el-dialog__header span {
 		padding-left: 38px;
 		height: 38px;
 		display: inline-block;
-	
+
 	}
 	/*img:hover{*/
 	/*background-color: #1b274c;*/
 	/*}*/
-	
+
 	#installlog .block .el-form-item__content,
 	#menuEditModel .block .el-form-item__content {
 		line-height: 32px;
@@ -407,16 +425,16 @@ if(this.issecond==60){
 	.wrapper {
 		height: 100%;
 	}
-	
+
 	.user span {
 		float: left;
 		display: block;
 		overflow: hidden;
 	}
 	.user .out{
-	 margin-left: 10px	
+	 margin-left: 10px
 	}
-	
+
 	.out ,.install{
 		float: left;
 		width: 18px;
@@ -426,7 +444,7 @@ if(this.issecond==60){
 		line-height: 18px;
 		margin: 18px 0px 0px 10px;
 	}
-	
+
 	@media screen and (max-width: 1366px) {
 		.out {
 			float: left;

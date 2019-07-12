@@ -4,7 +4,7 @@
       <div class="hd">
         <span>新增工作单位</span>
         <span class="btnRight">
-          <button class="Zbtn btn-rt">新增</button>
+          <button class="Zbtn btn-rt" @click="addRoordata">新增工作单位</button>
         </span>
       </div>
       <div class="bd">
@@ -34,6 +34,13 @@
 				<el-button type="primary" @click="saveClick">保 存</el-button>
 			</span>
     </el-dialog>
+    <el-dialog class="Zdialog" title="编辑内容" :visible.sync="rootVisible" :before-close="rootCancelclick" width="30%">
+			<el-input v-model="rootText" placeholder="请输入内容"></el-input>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="rootCancelclick">取 消</el-button>
+				<el-button type="primary" @click="rootSaveclick">保 存</el-button>
+			</span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -56,13 +63,7 @@ export default {
 				},
 				{
           id: 3,
-          label: "上海",
-          children: [
-            {
-              id: 4,
-              label: "上海1"
-            }
-          ]
+          label: "上海"
         }
       ],
       defaultProps: {
@@ -74,7 +75,10 @@ export default {
 			editText : '',
 			editNode : {},
 			editData : {},
-			isEdit : true,  //  编辑
+      isEdit : true,  //  编辑
+      // root 
+      rootVisible : false,
+      rootText : '',
     };
   },
   methods: {
@@ -169,12 +173,28 @@ export default {
         </span>
       );
     },
+    // root 操作
+    addRoordata(){
+      this.rootVisible = true;
+    },
+    rootCancelclick(){
+      this.rootVisible = false;
+      this.rootText = '';
+    },
+    rootSaveclick(){
+      let text = this.rootText;
+      const newChild = { id: id++, label: text, children: [] };
+      this.treeData.push(newChild)
+      this.rootVisible = false;
+    },
     // 跳转下一级
 		saveTreedata(){
+      // 保存数据
+      console.log(this.treeData);
       // 修改 vuex 数据
       let val = '2'
       this.$store.commit('skip',val);
-		}
+    },
   }
 };
 </script>

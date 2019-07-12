@@ -30,12 +30,20 @@
 </template>
 <script>
 	import $ from 'jquery'
+	import {heightAuto} from '../../untils/heightAuto' //注意路径
 	export default {
         data() {
 			return {
 				system: {}
 			}
 		},
+		mounted: function() {
+
+			/* 高度自适应 */
+			let row = '.mRightTree';
+			heightAuto(row)
+		},
+
     }
 </script>
 <style scoped>

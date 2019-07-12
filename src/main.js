@@ -32,6 +32,10 @@ import myserver from './script/servers'
 
 import store from './store'
 
+
+// 全局过滤器文件
+import * as filters from './filter/index'
+
 Vue.use(myserver)
 // Vue.use(treemenu)
 Vue.use(vuescroll)
@@ -57,13 +61,13 @@ Vue.prototype.reLogin = function (res){
 	console.log("进入判断是否需要弹窗"+"window.IsTips="+window.IsTips);
 	// if(window.IsTips){
 		if(res == 999002){
-		
+
 			this.$message({
 				message: '您的账号在其他地方登录了',
 				type: 'warning'
 			});
 			console.log(this.$route.path);
-		
+
 			this.$router.push({
 				path: "/"
 			})
@@ -71,12 +75,65 @@ Vue.prototype.reLogin = function (res){
 	// }else{
 	// 	console.log("您的账号已退出");
 	// }
-	
-	
+
+
+}
+
+
+Vue.prototype.removing=function(idlist){
+  var obj={};
+
+  for(var i=0;i<idlist.length;i++){
+    var cur=idlist[i]; // 100 100 900.....
+    if(obj[cur]===cur){
+      idlist[i]=idlist[idlist.length-1];//对
+      //ary[i]是对象的属性名
+      //=ary[ary.length-1]
+      /*ary[1]=2;  改变数组中索引为1的值
+      cur=2; 将变量的值重新定义
+      */
+      //cur=ary[ary.length-1];//错
+      //cur和ary[i]是什么关系？
+      //cur代表的是数组中的属性值，是一个确定的值，而我们此时是需要将数组的末尾项给到数组的当前项
+      //替换当前项
+      idlist.length--;
+      i--;
+    }
+    obj[cur]=cur;
+  }
+  console.info(idlist);
+
+}
+Vue.prototype.postSwagger = function (url,par){
+
+	   let URL = ServerUrl;
+	this.$http.post(URL + url, par).then(function (res) {
+		console.log(res)
+		return  res
+
+
+		if (res.status === 200 && res.data.result == "ok") {
+
+
+
+		}
+		if (res.data.result == "error") {
+		  _this.$message({
+			message: res.data.error_description,
+			type: 'warning'
+		  });
+		  console.log(res);
+		}
+
+	  }).catch(function (error) {
+		console.log(error);
+	  });
+
+
 }
 //处理时间戳方法
 Vue.prototype.timestampToTime  = function (res){
-	
+
 	var date = new Date(res) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
 	var Y = date.getFullYear() + '-'
 	var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-'
@@ -86,6 +143,13 @@ Vue.prototype.timestampToTime  = function (res){
 	var s = date.getSeconds()
 	return Y+M+D+h+m+s
 }
+
+
+// 统一注册
+Object.keys(filters).forEach(key => {
+	Vue.filter(key, filters[key])
+}) 
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

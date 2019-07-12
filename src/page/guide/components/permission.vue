@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <!-- 新增管理员 -->
+    <!-- 新增权限分组 -->
     <el-dialog
       class="Zdialog-form"
       title="新增权限分组"

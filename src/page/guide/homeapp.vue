@@ -2,7 +2,7 @@
   <div class="content" id="homeapp">
     <div class="tabCont">
 		<ul class="guide">
-			<li v-for='(item,index) in tabData' :key="index" :label='item.label'
+			<li v-for='(item,index) in this.tabData' :key="index" :label='item.label'
 				:class="{active:$store.state.tabIndex - 1 >= index}"
 				@click="tabClick(item,index)"
 				>{{item.text}}</li>
@@ -27,6 +27,8 @@ import Setcarousel from "./components/setcarousel";
 import Finish from "./components/finish";
 
 import $ from "jquery";
+
+//import { demoApi} from '@/page/api/homeapi';
 
 export default {
   data() {
@@ -84,24 +86,21 @@ export default {
 		}
 	},
   mounted: function() {
-    // 计算高度  最好用原生替换
-    var hei = document.documentElement.clientHeight;
-			$("#cont").css("height", hei - 278);
-								
-			$(window).resize(function () {
-				var wid = document.documentElement.clientWidth,
-				hei = document.documentElement.clientHeight;
-				$('#cont').css('height', hei - 278);
-      })
-      
+
+    // demo api
+
+   /*   demoApi().then(res => {
+        console.log(res);
+      }) */
+
+
+    /*   let URL = ServerUrl;
+      var Select={}
+      this.$http.post(URL + '/super/admin/api/v1/enterprise_management/list_all_assist_servers',{} ).then(function(res) {
+        console.log(res);
+      }) */
+            
   },
-  /* 
-  computed: {
-    isFollow () {
-      return this.$store.state.tabIndex;　　//需要监听的数据
-    }
-  } 
-  */
   
 };
 </script>
