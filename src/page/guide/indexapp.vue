@@ -1,33 +1,7 @@
 <template>
   <div class="wrapper">
-    <div class="head">
-      <div class="user">
-        <div class="userImg"></div>
-        <span>
-          <a href="javascript:;" v-html="Usemessage"></a>
-        </span>
-        <span class="install">
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              <img src="../../assets/install.png">
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <span>
-                <el-dropdown-item>修改密码</el-dropdown-item>
-              </span>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
-
-        <span class="out">
-          <img src="../../assets/out.png">
-        </span>
-      </div>
-      <div class="indexlogo">掌上通管理平台</div>
-    </div>
+    <Header logoName="掌上通管理平台" isInformation = '1' ></Header>
     <div class="main">
-      <!-- <NavView></NavView> -->
       <Homeapp></Homeapp>
     </div>
   </div>
@@ -36,24 +10,22 @@
 <script>
 import $ from "jquery";
 import axios from "axios";
-/* import NavView from "./components/nav.vue"; */
 import Homeapp from "./homeapp.vue";
+import Header from "../../components/Header.vue";
 
 export default {
   data: function() {
     return {
-      issecond: 60,
-      countdown: "获取验证码",
-      hackReset: true,
-      headPicUrl: "",
-      Usemessage: localStorage.userName,
-      parameter: {
-        phone: "",
-        code: "",
-        Password1: "",
-        Password2: ""
-      }
+      isShow : true,
     };
+  },
+  components: {
+    Header,
+    Homeapp
+  },
+  destroyed: function() {
+    window.IsTips = false;
+    console.log("页面关闭了");
   },
   mounted() {
     var hei = document.documentElement.clientHeight;
@@ -65,21 +37,7 @@ export default {
       $(".mLeft").height($(".main").height());
       $(".mRight").height($(".main").height());
     });
-    /* window.addEventListener('resize', () => { //  resize:当调整浏览器窗口的大小时触发事件
-      this.imgHeight = this.$refs.imgHeight[0].height
-      this.imgLoad()
-    }) */
-  },
-  methods:{
-    imgLoad() {
-        this.$nextTick(() => {
-          this.imgHeight = this.$refs.imgHeight[0].height
-      })
-    }
-  },
-  components: {
-    Homeapp
-  },
+  }
 };
 </script>
 

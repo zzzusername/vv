@@ -46,6 +46,7 @@
 						<el-table
 						:data="ststemData"
 						>
+							<el-table-column prop="fixedSort" label="序号"></el-table-column>
 							<el-table-column prop="action_time" label="操作时间">
 								<template slot-scope="scope">
 									<span>{{ scope.row.action_time | FormatDate('yyyy-MM-dd hh:mm:ss') }}</span>
@@ -85,23 +86,7 @@
 	export default {
         data() {
 			return {
-				ststemData : [
-					{
-						action_time: 1562825192000,
-						enterprise_id: "1",
-						enterprise_name: "视联动力",
-						fun_name: "查询满足条件的管理员操作日志",
-						fun_url: "/admin/api/v1/log/user_action/get_fun_entries_by_module_url",
-						id: 16,
-						module_name: "管理员操作日志",
-						module_url: "/admin/api/v1/log/user_action",
-						type: "ENTERPRISE_ADMIN",
-						user_account: "15116965196",
-						user_id: "12b9434e-e640-4efc-9cd5-3473d6436f3b",
-						user_ip: "58.30.131.70",
-						user_name: "赵昆",
-					}
-				],
+				ststemData : [],
 				funData : [],
 				funDatavalue : '',
 				moduleUrl : [
@@ -178,6 +163,10 @@
 					if (res.status === 200 && res.data.result == "ok") {
 						console.log(res.data.data)
 						this.ststemData = res.data.data.list;
+						this.ststemData.map(function(item,index){
+							item.fixedSort = index - 0 + 1;
+						})
+
 						/* 总条数 */
 						this.page_total_items = res.data.data.page_total_items; 
 						this.page_total_pages = res.data.data.page_number;

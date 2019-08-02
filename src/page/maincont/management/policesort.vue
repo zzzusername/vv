@@ -19,16 +19,16 @@
 							</el-table-column>
 						</el-table>
 					</div>
-                    <!-- page -->
-                    <el-pagination
-                        @size-change="handleSizeChange" 
-                        @current-change="handleCurrentChange" 
-                        :current-page.sync="currentPage" 
-                        :page-size="pagesize" 
-                        layout="total, prev, pager, next, jumper" 
-                        :total="total"
-                        class="zPage">
-                    </el-pagination>
+                  	<!-- page -->
+					<el-pagination
+						@current-change="handleCurrentChange" 
+						:current-page.sync="page_total_pages" 
+						:page-size="page_size" 
+						layout="total, prev, pager, next, jumper" 
+						:total="page_total_items"
+						class="zPage"
+						>
+					</el-pagination>
 				</div>
 			</div>
 		</div>
@@ -41,6 +41,9 @@
     import '../../style/common.css' /*引入公共样式*/
 	// js
 	import {heightAuto} from '../../untils/heightAuto' //注意路径
+	/* api */
+	// getBannerlist 获取列表
+	import {getBannerlist} from '../../api/appmanagement';
 
 	export default {
         data() {
@@ -54,25 +57,40 @@
 					},
                 ],
 				/* 分页相关 */
-				currentPage: 10,
-				pagesize: 10,
-				total : 0,
+				page_size : 10,			//  请求多少条目
+				page_total_items : 10,  // 总条数
+				page_total_pages : 1,  //  当前条数
 			}
 		},
 		mounted: function() {
 			let row = '.policesortList'
 			heightAuto(row)
+			// 初始化信息
+			this.getInitlistData();
 		},
 		methods:{
-			// page
-			handleSizeChange(size) {
-				this.pagesize = size;
+			// 初始化信息
+			getInitlistData(){
+				// getBannerlist
+				let objData = {
+					"enterprise_id":  localStorage.EnterpriseId,
+					"page_number": this.page_total_pages - 1,
+  					"page_size": 10
+					
+				}
+				getBannerlist(objData).then(res => {
+					if (res.status === 200 && res.data.result == "ok") {
+						console.log(res);
+						/* 总条数 */
+						this.page_total_items = res.data.data.page_total_items; 
+						this.page_total_pages = res.data.data.page_number - 0 + 1;
+					}
+				});	
 			},
+			// page
 			handleCurrentChange(currentPage) {
-				this.currentPage = currentPage;
-				console.log("我是页码" + this.currentPage);
-				Page = this.currentPage;
-				console.log(Page);
+				this.page_total_pages = currentPage;
+				this.getInitallUserdata();
 			},
         },
         updated() {
@@ -311,9 +329,6 @@
 		}
     }
     /* 弹窗样式重置 */
-    .block, .formTable, .el-dialog__body{
-        overflow: hidden;
-    }
     .formTable{
         padding: 2px 4px;
         background: #4a567c;

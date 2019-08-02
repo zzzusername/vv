@@ -2,7 +2,7 @@
 	<div id="addmoduls" class="mRight">
 		<div class="addmodulsList">
 			<div class="zForm">
-                <button class="buttonradius" style="float:right;">新增</button>
+                <button class="buttonradius" style="float:right;" @click="addDatalist">新增</button>
 			</div>
 			<!-- table  -->
 			<div class="zTable">
@@ -41,13 +41,14 @@
 				</div>
 			</div>
 		</div>
+
 	</div>
 </template>
 <script>
 	import $ from "jquery";
     import axios from "axios";
     /* 展示弹窗样式文件 */
-    import '../../style/common.css' /*引入公共样式*/
+	import '../../style/common.css' /*引入公共样式*/
 	// js
 	import {heightAuto} from '../../untils/heightAuto' //注意路径
 
@@ -81,6 +82,10 @@
 			heightAuto(row)
 		},
 		methods:{
+			// 新增按钮
+			addDatalist(){
+				console.log('新增')
+			},
 			// page
 			handleSizeChange(size) {
 				this.pagesize = size;
@@ -328,9 +333,6 @@
 		}
     }
     /* 弹窗样式重置 */
-    .block, .formTable, .el-dialog__body{
-        overflow: hidden;
-    }
     .formTable{
         padding: 2px 4px;
         background: #4a567c;
@@ -345,7 +347,6 @@
     #userAddModel2 .el-form-item {
 		margin: 0;
 		padding: 0;
-		width: 91%;
 		float: left;
     }
     .infoMsg{

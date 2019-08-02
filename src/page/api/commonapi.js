@@ -30,10 +30,9 @@ export function modifyEnterprise(data) {
     })
 }
 /* 查询企业信息 */
-/* /super/admin/api/v1/enterprise_management/get_enterprise_info */
 export function getEnterprisinfo(data) {
     return request({
-        url: '/super/admin/api/v1/enterprise_management/get_enterprise_info',
+        url: '/admin/api/v1/enterprise_management/get_enterprise_info',
         method: 'post',
         data: data
     })

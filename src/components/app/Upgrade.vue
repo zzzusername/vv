@@ -34,8 +34,9 @@
 							<template slot-scope="scope">
 
                 <a href="javascript:;"  class="ml5" @click="detailsclick(scope.row)" ><span >详情</span></a>
-                <a href="javascript:;"  class="ml5"  v-show="!scope.row.released" @click="release_h5_upgrade(scope.row)"><span >发布</span></a>
-                <a :href="scope.row.file_url" :download="scope.row.qiniu_key" class="ml5"  ><span >下载</span></a>
+                <a href="javascript:;"  class="ml5"  v-show="!scope.row.released&&scope.row.is_new" @click="release_h5_upgrade(scope.row)"><span >发布</span></a>
+                <!--&&scope.row.is_new-->
+                <a :href="scope.row.file_url" download="" class="ml5"  ><span >下载</span></a>
 
 	                             <a href="javascript:;"  class="ml5" @click="deletelist(scope.row)" >
 			                      <span >删除</span></a>
@@ -144,8 +145,8 @@
           </div>
           <div class="userBtn2">
             <el-form-item>
-             
-              <el-button @click="addCancel">关闭</el-button>
+
+              <el-button @click="dialogTableVisibledetails=false">关闭</el-button>
             </el-form-item>
           </div>
         </el-form>
@@ -179,6 +180,7 @@
 				enabled:"0",
 				usable:"PUBLIC",
 				ptime:"promptly",
+				FilePath:'',
 
 				percentage: 0,
 				addinputdata: "",
@@ -195,6 +197,7 @@
 
 				total: 1,
 				checked: false,
+				querybut: false,
 				multipleSelection: [],
 				dialogTableVisibleadd: false,
         dialogTableVisibledetails: false,
@@ -204,7 +207,7 @@
 
         },
 				add: {
-					
+
 					FilePath:"",//文件地址
 
 
@@ -327,15 +330,35 @@
 			addSubmit() { //新增
 			     console.log(this.add)
 				var flag = true;
-				if(this.add.Remark == '') {
-					this.$message({
-						message: '版本号不允许为空',
+					if (this.FilePath==""&&this.add.Remark == ''){
+						this.$message({
+						message: '新增数据不允许为空',
 						type: 'warning'
 					});
 					flag = false;
+					return false
+
+				}else
+				if (this.FilePath==""){
+					this.$message({
+						message: '文件不允许为空',
+						type: 'warning'
+					});
+					flag = false;
+					return false
+
+				}else
+				if(this.add.Remark == '') {
+					this.$message({
+						message: '版本更新说明不允许为空',
+						type: 'warning'
+					});
+					flag = false;
+					return false
+
 				}
-			
-		
+
+
 				if(flag){
 					var _this=this;
 					var add_h5={
@@ -380,11 +403,11 @@
 
 			},
 
-	        
+
 
       //获取列表数据
       getVersionList(isall,all) {
-        this.zInput = ""
+     
         let _this = this;
         let URL = window.ServerUrl;
         var pageSize = this.pagesize,
@@ -402,6 +425,8 @@
           if (res.status === 200 && res.data.result == "ok") {
             if(isall===''){
               if(all=="all"){
+				     _this.zInput = ""
+				     _this.querybut=false; 
                 _this.$message({
                   message: "全部数据",
                   type: "success"
@@ -409,6 +434,7 @@
 
               }
             }else{
+				  _this.querybut=true; 
               _this.$message({
                 message: "查询完成",
                 type: "success"
@@ -417,16 +443,22 @@
             }
 
 			let response = res.data.data.list;
+            console.log(response)
+
 			 for (var i in response) {
 				  response[i].upload_time = _this.timestampToTime(response[i].upload_time)
-			
-			
+
+         if(response[i].file_url.substring(0,4)!="http"){                             response[i].file_url=URL+"/"+ response[i].file_url
+         }
 			  if(response[i].release_time!=undefined)
-             
+
+
                  response[i].release_time = _this.timestampToTime(response[i].release_time)
             }
 
             _this.tableData3 = response
+
+            _this.total=res.data.data.page_total_items
 
             console.log(_this.tableData3)
           }
@@ -526,11 +558,11 @@
 			if(res.status===200&&res.data.result=="ok"){
 
 
-						
+
 						_this.percentage=100
 						_this.FilePath=res.data.data.h5_package_file_temp_path
 						console.log(_this.FilePath )
-						
+
 
 
 						_this.$message({
@@ -610,10 +642,72 @@
 				page = this.pagenumber;
 				//this.getMenuInfoList();  //获取列表的函数
 				// console.log("search:"+this.value);
-				this.getVersionList("" ,"");
+			 this.pageChange();
 			},
+
+			pageChange() {
+				this.zInput = ""
+				let _this = this;
+				let URL = window.ServerUrl;
+				var pageSize = this.pagesize,
+				pagenumber = this.pagenumber - 1;
+				var terminalType = '';
+				var par = {
+				"page_number": pagenumber,
+				"page_size": pageSize,
+				"version": ""
+				}
+				if(this.querybut){
+					par.version=this.zInput
+				}
+
+			Upgradelist_h5_upgrade_infos(par).then(function (res) {
+
+
+				if (res.status === 200 && res.data.result == "ok") {
+			
+
+					let response = res.data.data.list;
+					console.log(response)
+
+					for (var i in response) {
+						response[i].upload_time = _this.timestampToTime(response[i].upload_time)
+
+				if(response[i].file_url.substring(0,4)!="http"){                             response[i].file_url=URL+"/"+ response[i].file_url
+				}
+					if(response[i].release_time!=undefined)
+
+
+						response[i].release_time = _this.timestampToTime(response[i].release_time)
+					}
+
+					_this.tableData3 = response
+
+					_this.total=res.data.data.page_total_items
+
+					console.log(_this.tableData3)
+				}
+				if (res.data.result == "error") {
+					_this.$message({
+					message: res.data.error_description,
+					type: 'warning'
+					});
+					console.log(res);
+				}
+
+				}).catch(function (error) {
+				console.log(error);
+				});
+			},
+
+
+
+
+
+
+
 		//发布H5升级信息
-				release_h5_upgrade(index) { 
+				release_h5_upgrade(index) {
 			 console.log(index)
 				// var cheklength = this.multipleSelection;
 
@@ -635,7 +729,7 @@
 							"version":index.version
 						}
 						console.log(delDate);
-					
+
 						Upgraderelease_h5_upgrade_info(delDate ).then(function(res) {
 
 
@@ -655,8 +749,8 @@
 										console.log(res);
 									}
 
-							
-							
+
+
 							}
 						}).catch(function(error) {
 							console.log(error);
@@ -1076,7 +1170,15 @@
 		/* background: #2a3558; */
 		border: 1px #3b4872 solid;
 	}
-.upgrade .el-form-item__label {
+#Upgradeview .upgrade .el-form-item__label {
+  width: 18.2% !important;
+  height: 150px;
+  margin: 2px 0;
+  line-height: 46px;
+  /* background: #2a3558; */
+  border: 1px #3b4872 solid;
+}
+#Upgradeview .Upgradelist .el-form-item__label {
   width: 18.2% !important;
   height: 150px;
   margin: 2px 0;

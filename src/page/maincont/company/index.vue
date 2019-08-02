@@ -3,25 +3,25 @@
 		<div class="mRightTree">
 			<div class="zmainBox">
 				<div class="systemtable" id="systemtable">
-					<ul>
-						<li class="zname">提示</li>
-                        <li class="zinput"><input type="text" name="name" maxlength="200" value="企业信息如需更新，请联系客服！" /></li>
-					</ul>
                     <ul>
 						<li class="zname">企业名称</li>
-                        <li class="zinput"><input type="text" name="name" maxlength="200" value="歌华大厦" /></li>
+                        <li class="zinput"><input v-model="system.name" type="text" name="name" maxlength="200" value="歌华大厦" /></li>
 					</ul>
                     <ul>
 						<li class="zname">企业地区</li>
-                        <li class="zinput"><input type="text" name="name" maxlength="200" value="北京市朝阳区" /></li>
+                        <li class="zinput"><input v-model="system.region_name" type="text" name="name" maxlength="200"/></li>
 					</ul>
                     <ul>
 						<li class="zname">联系人</li>
-                        <li class="zinput"><input type="text" name="name" maxlength="200" value="王大拿" /></li>
+                        <li class="zinput"><input v-model="system.contacts_names" type="text" name="name" maxlength="200" value="王大拿" /></li>
 					</ul>
                     <ul>
 						<li class="zname">联系人手机号</li>
-                        <li class="zinput"><input type="text" name="name" maxlength="200" value="13800000000" /></li>
+                        <li class="zinput"><input v-model="system.contacts_phonenums" type="text" name="name" maxlength="200" value="13800000000" /></li>
+					</ul>
+					<ul>
+						<li class="zname" style="color:red;">提示</li>
+                        <li class="zinput"><input style="color:red;" type="text" name="name" maxlength="200" value="企业信息如需更新，请联系客服！" /></li>
 					</ul>
 				</div>
 			</div>
@@ -31,17 +31,35 @@
 <script>
 	import $ from 'jquery'
 	import {heightAuto} from '../../untils/heightAuto' //注意路径
+	import {getEnterprisinfo}from '../../api/commonapi.js'
 	export default {
         data() {
 			return {
 				system: {}
 			}
 		},
-		mounted: function() {
+		methods :{
+			getDetaildata(){
+				let objData = {
+						"enterprise_id": localStorage.EnterpriseId
+					}
 
+				getEnterprisinfo(objData).then(res => {
+
+					if (res.status === 200 && res.data.result == "ok") {
+							console.log(res)
+							this.system = res.data.data
+					}
+
+				});	
+
+			}
+		},
+		mounted: function() {
 			/* 高度自适应 */
 			let row = '.mRightTree';
 			heightAuto(row)
+			this.getDetaildata()
 		},
 
     }

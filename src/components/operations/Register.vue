@@ -76,7 +76,7 @@ export default {
 		},
 		/* 分页相关 */
         page_size : 10,			//  请求多少条目
-        page_total_items : 0,  // 总条数
+        page_total_items : 0,  // 总条数 
         page_total_pages : 1,  //  当前条数
     };
   },

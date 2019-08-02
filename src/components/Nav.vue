@@ -131,16 +131,16 @@
             "actionIdList": [115],
             "children": []
           },
-			{
-				"id": 15,
-				"parentId": 7,
-				"index": "1-10",
-				"title": "反馈管理",
-				"url": "/Home/Feedback",
-				"description": "反馈管理",
-				"actionIdList": [115],
-				"children": []
-			},
+//			{
+//				"id": 15,
+//				"parentId": 7,
+//				"index": "1-10",
+//				"title": "反馈管理",
+//				"url": "/Home/Feedback",
+//				"description": "反馈管理",
+//				"actionIdList": [115],
+//				"children": []
+//			},
 
 			]
 		}, {
@@ -156,17 +156,26 @@
 				"parentId": 8,
 				"index": "1-10",
 				"title": "流媒体服务器",
-				"url": "",
-				"description": "流媒体服务器",
+				"url": "/Home/streamingmedia",
+				"description": "/Home/流媒体服务器",
 				"actionIdList": [115],
 				"children": []
 			}, {
-				"id": 22,
+				"id": 34,
 				"parentId": 8,
 				"index": "1-20",
 				"title": "辅助服务器",
 				"url": "/Home/ServerStatusDetail",
 				"description": "辅助服务器",
+				"actionIdList": [80, 152],
+				"children": []
+			},{
+				"id": 35,
+				"parentId": 8,
+				"index": "1-20",
+				"title": "SDK管理平台",
+				"url": "/Home/SKDplatform",
+				"description": "SDK管理平台",
 				"actionIdList": [80, 152],
 				"children": []
 			}]

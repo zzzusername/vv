@@ -67,7 +67,11 @@
                   v-loading.fullscreen.lock="fullscreenLoading"
                   value="登录"
                 />
-              </div>
+              </div >
+                 <!-- <div class="passwordbox">
+                  <span class="Forget" @click="Forgetpassword">忘记密码</span>
+                </div> -->
+
             </div>
           </div>
           <div class="loginBg">
@@ -76,39 +80,13 @@
         </div>
       </div>
 
-      <!-- <el-dialog
-        title="提示"
-        :visible.sync="dialogVisible"
-        width="30%"
-        :before-close="handleClose"
-        >
-        <span>您的密码过于简单请及时修改</span>
-        <span slot="footer" class="dialog-footer">
-            <div class="passWord inputBg inputchang">
-                                      <span><img src="../assets/userName.png" alt=""></span>
-                                      <input class="password" name="pwd" type="password" maxlength="16" autocomplete="off" placeholder="密码">
-                                  </div>
-          <el-button @click="loginSuccess">取 消</el-button>
-          <el-button type="primary" @click="loginfail">确 定</el-button>
-        </span>
-      </el-dialog>-->
 
-      <!-- 密码验证简单 -->
-      <!--<el-button-->
-      <!--type="primary"-->
-      <!--@click="openFullScreen"-->
-      <!--v-loading.fullscreen.lock="fullscreenLoading">-->
-      <!--指令方式-->
-      <!--</el-button>-->
-      <!--<el-button-->
-      <!--type="primary"-->
-      <!--@click="openFullScreen2">-->
-      <!--服务方式-->
-      <!--</el-button>-->
       <div class="Copyright">
-        <span class="myversion">11</span> ©2017北京视联动力国际信息技术有限公司
+        <span class="myversion"></span>
+        <p v-text="company"></p>
+
       </div>
-    </div>
+  </div>
 
     <el-dialog
       title="选择企业"
@@ -121,7 +99,7 @@
           <div class="listBox">
             <ul>
               <li class="fleft tll" v-for="(item, index) in logintypeData" :key="index">
-                <el-radio v-model="radio" :label="index">{{item.enterprise_name}}</el-radio>
+                <el-radio @ v-model="radio" :label="item">{{item.enterprise_name}}</el-radio>
               </li>
             </ul>
           </div>
@@ -144,7 +122,11 @@ import axios from "axios";
 import {
   PostlLogincode,
   PostlLoginoptions,
-  Postuserlogin
+  Postuserlogin,
+  Postuserlogin2,
+  getinit
+
+
 } from "@/components/interface/common.js";
 import crypto from "crypto";
 
@@ -172,7 +154,9 @@ $(document).keypress(function(e) {
 export default {
   data() {
     return {
+      company:"",
       radio: 0,
+      user_role:"",
       loginpassword: "",
       logintypeData: [],
       typedialogVisible: false,
@@ -194,15 +178,58 @@ export default {
     this.getNum();
 
     this.postcode();
+    this.company=window.companyName;
+     this.loading()
+     this.user_role=""
 
     //      this.login_put()
   },
   methods: {
+//    平台初始化
+    version() {
+      var _this = this
+      var time={
+        "timestamp": 0
+      }
+
+      getinit(time).then(function (res) {
+
+
+        if (res.status === 200 && res.data.result == "ok") {
+          window.mediaURL=res.data.data.stream_home_page;
+          window.SkdURL=res.data.data.sdk_server_home_page;
+          $(".myversion").html(res.data.data.sys_version);
+
+        }
+        if (res.data.result == "error") {
+          _this.$message({
+            message: res.data.error_description,
+            type: 'warning'
+          });
+
+        }
+
+
+      })
+
+    },
+
+
+    //忘记密码
+    Forgetpassword(){
+        this.$router.push({
+                path: "/Forgetpassword"
+              });
+
+    },
     //开始二级登录
     userlogin() {
       let _this = this;
       let URL = ServerUrl;
-      if (this.radio === 0) {
+      
+      console.log(this.radio)
+
+      if (this.radio.enterprise_name === "超级管理员"&& this.radio.user_role==="ROLE_SUPER_ADMIN") {
         var pwd = "";
         var login = $(".username").val();
         //    var pwd = $('.password').val();
@@ -223,12 +250,16 @@ export default {
               var personparse = res.data.data;
               _this.typedialogVisible = false;
 
-              
+//              console.log(personparse)
+//              console.log("我是用户名"+personparse.user
+//.realname)
+//
               localStorage.setItem(
                 "Accesstoken",
                 personparse.access_token.value
               );
-              localStorage.setItem("User", personparse.user);
+              localStorage.setItem("realname", personparse.user
+.realname);
               localStorage.setItem("Personparse", personparse);
 
               //console.log(localStorage);
@@ -242,15 +273,15 @@ export default {
             console.log(error);
           });
       } else {
-        var enterprise_id = "";
+        var enterprise_id =this.radio.enterprise_id;
         var login = $(".username").val();
         var code = $(".ValidateNum").val();
         var logintype = this.logintypeData;
-        for (var index in logintype) {
-          if (parseInt(index) === this.radio) {
-            enterprise_id = logintype[index].enterprise_id;
-          }
-        }
+        // for (var index in logintype) {
+        //   if (parseInt(index) === this.radio) {
+        //     enterprise_id = logintype[index].enterprise_id;
+        //   }
+        // }
         let userparameter = {
           account: login,
           captcha: code,
@@ -260,9 +291,36 @@ export default {
           password: this.loginpassword,
           purpose: "LOGIN"
         };
-        this.$http
-          .post(URL + "/admin/api/v1/user/login", userparameter)
-          .then(function(res) {
+        Postuserlogin2(userparameter).then(res => {
+					  if (res.status === 200 && res.data.result == "ok") {
+              var personparse = res.data.data;
+              
+              console.log(personparse);
+
+//              console.log(personparse);
+
+              _this.typedialogVisible = false;
+              _this.typedialogVisible = false;
+              // // 跳转到相应页面 Homeapp
+              // 存企业 id  enterprise.id
+              localStorage.setItem("EnterpriseId", personparse.enterprise.id);
+              localStorage.setItem(
+                "Accesstoken",
+                personparse.access_token.value
+              );
+
+              localStorage.setItem("userId", personparse.user.id);
+              localStorage.setItem("userPhone", personparse.user.phonenum);
+              localStorage.setItem("Personparse", personparse);
+              localStorage.setItem("realname", personparse.user
+.realname);
+
+              _this.$router.push({
+                path: "/Homemain"
+              });
+            }
+				});
+       /*  this.$http.post(URL + "/admin/api/v1/user/login", userparameter).then(function(res) {
             // _this.reLogin(res.data.code); //提示帐号登陆、
             if (res.status === 200 && res.data.result == "ok") {
               var personparse = res.data.data;
@@ -279,8 +337,6 @@ export default {
                 personparse.access_token.value
               );
               localStorage.setItem("Personparse", personparse);
-              // vuex
-              _this.$store.commit("addLogininformation", personparse);
 
               _this.$router.push({
                 path: "/Homeapp"
@@ -289,7 +345,7 @@ export default {
           })
           .catch(function(error) {
             console.log(error);
-          });
+          });  */
       }
     },
     //获取验证
@@ -312,7 +368,7 @@ export default {
           }
         })
         .catch(function(error) {
-          console.log(error);
+//          console.log(error);
         });
     },
 
@@ -349,7 +405,7 @@ export default {
         password: this.loginpassword,
         purpose: "LOGIN"
       };
-      console.log(loginbutparam);
+//      console.log(loginbutparam);
       PostlLoginoptions(loginbutparam)
         .then(function(res) {
           console.log(res);
@@ -358,13 +414,15 @@ export default {
             var listtype = res.data.data.login_options;
 
             for (var its in listtype) {
-              console.log(listtype[its]);
+//              console.log(listtype[its]);
               if (listtype[its].user_role === "ROLE_SUPER_ADMIN") {
+                _this.user_role="ROLE_SUPER_ADMIN"
                 listtype[its].enterprise_name = "超级管理员";
               }
             }
             _this.logintypeData = listtype;
-            console.log(_this.logintypeData);
+            _this.radio=listtype[0]
+           console.log(_this.logintypeData);
             _this.typedialogVisible = true;
           }
           if (res.data.result == "error") {
@@ -372,11 +430,11 @@ export default {
               message: res.data.error_description,
               type: "warning"
             });
-            console.log(res);
+
           }
         })
         .catch(function(error) {
-          console.log(error);
+
         });
     },
 
@@ -461,9 +519,7 @@ export default {
         nums += chars[id];
       }
     },
-    version() {
-      $(".myversion").html(version);
-    },
+
     //			背景图适应屏幕
 
     loginopen() {
@@ -495,9 +551,13 @@ export default {
     loading() {
       var wid = document.documentElement.clientWidth,
         hei = document.documentElement.clientHeight;
+
       var fheight = $(".Copyright").height();
+        var content = document.getElementById("content-lkj")
+//        console.log("content-lkj")
+//        console.log(content.offsetHeight)
       $(".wraper").css("height", hei - fheight);
-      $("#content-lkj").css("height", hei - fheight);
+      $("#content-lkj").css("height", hei);
     },
     blank() {
       $(".errorInfo").html("");
@@ -561,6 +621,15 @@ export default {
 };
 </script>
 <style>
+.loginForm .passwordbox {
+  margin-top: 30px;
+  text-align: right;
+
+}
+.loginForm .Forget:hover {
+ color: rgb(148, 219, 171);
+
+}
 /* .logintype{
       position: absolute;
       top: 50%;
@@ -585,10 +654,10 @@ export default {
 }
 
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset;
-  border: 1px solid #ffffff !important;
-}
-
+      -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+      border: 1px solid #ffffff !important;
+      background-color: #ffffff;
+    }
 .myversion {
   color: #4a567c;
   position: absolute;

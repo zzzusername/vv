@@ -1,10 +1,14 @@
 
 /* 文本展示弹窗样式  #zDialogtext */
 #zDialogtext .block{
+    width: 100%;
 	margin-bottom: 20px;
     padding: 2px 4px;
     background: #4a567c;;
 	overflow: hidden;
+}
+#zDialogtext .inline{
+    width: 50%;
 }
 #zDialogtext .block li{
 	float: left;
@@ -22,6 +26,19 @@
     margin: 2px 0;
     line-height: 36px;
     border: 1px solid #3b4872;
+}
+#zDialogtext .imgCont{
+    height: 40px;
+    line-height: 40px;
+}
+#zDialogtext .imgCont img{
+    margin-top: 5px;
+    width: 30px;
+    height: 30px;
+}
+#zDialogtext .reason .liL, #zDialogtext .reason .liR{
+    height: 40px;
+    line-height: 40px;
 }
 #zDialogtext .liR{
 	float: left;
@@ -41,6 +58,45 @@
 }
 #zDialogtext .userBtn{
 	text-align: right;
+}
+#zDialogtext .userBtn .sure{
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    color: #333;
+    -webkit-appearance: none;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: 0;
+    margin: 0;
+    -webkit-transition: .1s;
+    transition: .1s;
+    padding: 11px 30px;
+    font-size: 14px;
+    border-radius: 3px;
+    background: linear-gradient(to right,#31f394, #31e4c1);
+}
+#zDialogtext .userBtn .close{
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    color: #333;
+    -webkit-appearance: none;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: 0;
+    margin: 0;
+    -webkit-transition: .1s;
+    transition: .1s;
+    padding: 11px 30px;
+    font-size: 14px;
+    border-radius: 3px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fcfeff), to(#c9e7f8));
+    background: linear-gradient(#fcfeff, #c9e7f8);
 }
 /* zPage */
 .zPage{
@@ -134,32 +190,302 @@
     top: -4px;
     left: 29px;
 }
+/* 侧边栏样式 */
+::-webkit-scrollbar {
+width: 12px;
+height: 12px;
+}
 
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #222d50;
+}
 
-/* 日期控件样式修改 */
-/* .timeBox {
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #4f5c84;
+}
+
+/* 个人信息弹窗样式 */
+#personal  .userBtn{
+    text-align: right;
+    overflow: hidden;
+}
+#personal .formTable{
+    padding: 2px 4px;
+    background: #4a567c;
+}
+#personal .block , #installlog .block{
+    width: 100%;
+}
+#personal .block .el-form-item__label{
+	height: 36px;
+  margin: 2px 0;
+  line-height: 36px;
+  border: 1px #3b4872 solid;
+	background: #1b274c;
+}
+#personal .block .el-input__inner{
+	height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px #3b4872 solid;
+}
+#personal .block .el-form-item{
+  margin: 0;
+}
+/* 下拉框样式 */
+/* localeSelectioncomponent 带有地区选择组件的样式统一处理 */
+#personal .treeCont, #localeSelectioncomponent .treeCont{
+	max-height: 150px;
+	overflow-y: auto;
+}
+/* 上传头像 */
+#personal .upLoad .el-form-item__content{
+    background-color: #2a3558;
+    height: 78px;
+    margin: 2px 0;
+    margin-left: 20%;
+    border: 1px #3b4872 solid;
+}
+#personal .Inf-img img{
     float: left;
-    width: 198px;
-    margin: 0 20px 0 3px;
+    width: 60px;
+    height: 60px;
+    margin: 5px 50px 0;    
 }
-.el-scrollbar__wrap{
-    background: #2e3859;
+#personal .Inf-img .fileUpbtn{
+    float: left;
+    color: #fff;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    background: #4a567c;
+    border-radius: 3px;
+    line-height: 36px;
+    text-align: center;
 }
-.time-select-item.selected:not(.disabled) {
-    color: #31f394;
-    font-weight: 700
+#personal .upLoad .el-form-item__label{
+    height: 80px;
+    line-height: 80px
 }
+#personal .fileUpbtn{
+    margin-top: 10px;
+    padding: 0;
+    float: left;
+    color: #fff;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    background: #4a567c;
+    border-radius: 3px;
+    line-height: 36px;
+    text-align: center;
+}
+#personal .fileUpbtn span{
+    color: #fff;
+}
+#personal .upCont{
+    position: relative;
+    padding-top: 20px;
+    overflow: hidden;
+}
+#personal #headPortrait{
+    opacity: 0;
+    width: 80px;
+    height: 30px;
+    position: absolute;
+    top: 20px;
+    left: 0;
+    z-index: 2;
+}
+#personal .upLoadinp{
+    float: left;
+    color: #fff;
+    width: 80px;
+    height: 30px;
+    background: #4a567c;
+    border-radius: 3px;
+    position: relative;
+    z-index: 1;
+    line-height: 30px;
+    text-align: center;
+}
+#personal .submitImg{
+    float: left;
+    color: #fff;
+    width: 80px;
+    height: 30px;
+    background: #4a567c;
+    border-radius: 3px;
+    position: absolute;
+    z-index: 19;
+    line-height: 30px;
+    text-align: center;
+    margin-top: 0px;
+    margin: initial;
+    margin-left: 30px;
+    cursor: pointer;
+}
+/* table 按钮样式 */
+.zTable .spanBtn{
+    cursor: pointer;
+}
+.zTable .spanBtn:hover{
+    color: #57e29b;
+}
+/* 默认 form block 样式 */
+#commonPop  .block .el-form-item__label{
+    width: 100%;
+    height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px solid #3b4872;
+}
+/* 上传 */
 
-.time-select-item.disabled {
-    color: #8b8d90;
-    cursor: not-allowed
+#commonPop .block-line{
+    float: left;
+    width: 50%;
 }
-
-.time-select-item:hover {
-    background-color: #2e3859;
-    font-weight: 700;
-    cursor: pointer
+#commonPop .el-dialog__body{
+    padding: 12px 20px;
+    color: #606266;
+    line-height: 24px;
 }
-.el-picker-panel{
-    border: 1px solid #2e3859;
-} */
+#commonPop .formTable{
+    padding: 2px 4px;
+    background: #4a567c;
+    margin-bottom: 20px;
+    overflow: inherit;
+}
+#commonPop .formTable:after{
+   display:block; 
+   content:""; 
+   height:0; 
+   clear: both; 
+   overflow: hidden; 
+   visibility: hidden;
+}
+#commonPop .el-form-item{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    float: left;
+}
+#commonPop #personalFormitem .el-form-item__label{
+	height: 70px;
+    line-height: 70px;
+}
+#commonPop #personalFormitem .el-form-item__content{
+	background-color: #2a3558;
+	margin-top: 2px;
+	margin-bottom: 2px;
+    height: 68px;
+    line-height: 70px;
+    border: 1px solid #3b4872;
+}
+/* 简介 */
+#reason{
+    height: 55px;
+    overflow: hidden;
+    padding: 0;
+}
+#reason .el-form-item__label{
+    height: 50px;
+    line-height: 50px;
+}
+#reason .el-textarea__inner{
+    background-color: #2a3558;
+    padding: 10px;
+    height: 57px;
+    margin-left: 2px;
+    border-radius: inherit;
+    border: none;
+}
+#tabChagecont{
+    width: 100%;
+	height: 350px;
+	background: #4a567c;
+}
+#tabChagecont .el-tabs__nav{
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+}
+#tabChagecont  .el-checkbox{
+    display: inline-block;
+}
+/* 所有地区现在下拉框 */
+#areaSelectpopover .treeCont{
+    position: absolute;
+    top: 37px;
+    left: 0px;
+    width: 100%;
+    min-height: 40px;
+    background: #2a3558;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 4;
+}
+#areaSelectpopover .close{
+    width: 20px;
+    height: 20px;
+    display: block;
+    position: absolute;
+    top: 41px;
+    right: 9px;
+    z-index: 5;
+}
+#areaSelectpopover .close img{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+#areaSelectpopover .makeSuer{
+    position: absolute;
+    top: 237px;
+    right: 10px;
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    display: block;
+    background: #57e29b;
+    text-align: center;
+    border: 1px #3b4872 solid;
+    border-radius: 50px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 9;
+}
+#areaSelectpopover .el-form-item__label{
+    height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px solid #3b4872;
+}
+#areaSelectpopover .el-input__inner{
+        height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px solid #3b4872;
+}
+#commonPop .userBtn{
+    padding-top: 24px;
+    text-align: right;
+    overflow: hidden;
+}
+/* 表格中的 状态切换按钮 */
+#changeState .spanBtn{
+    display: inline-block;
+    padding: 0 10px;
+    background: #1b274c;
+    border: 1px solid #191a1b;
+}
+#changeState .qiyong{
+    background: #57e29b;
+    color: #fff;
+    border: 1px solid #57e29b;
+}

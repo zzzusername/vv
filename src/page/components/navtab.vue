@@ -18,7 +18,7 @@
                   <span>{{item.title}}</span>
                 </template>
                 <el-menu-item-group v-for="(it,index) in item.children" :key="index">
-                  <router-link :to="it.url" class="MyOption Myopen Mydefault" tag="a">
+                  <router-link :to="it.url" class="MyOption Myopen Mydefault">
                     <el-menu-item class="MyOptionli" :index="it.url">
                       <span class="imgico" :class="'imgico' + index"></span>
                       {{it.title}}
@@ -35,7 +35,6 @@
 </template>
 <script>
 import $ from "jquery";
-import axios from "axios";
 	$(function() {
 
 		var wid = document.documentElement.clientWidth,
@@ -48,7 +47,7 @@ import axios from "axios";
 		$('.navMenubox').css('height', hei - fheight);
 		$('.centerBox').css('height', $(".centerBox").height() + 24);
 
-	});
+  });
 export default {
   data: function() {
     return {
@@ -59,7 +58,7 @@ export default {
           items: [
             {
               id: 2,
-              parentId: 0,
+              parentId: 2,
               index: "2",
               title: "企业管理",
               url: "",
@@ -76,7 +75,7 @@ export default {
                   actionIdList: [],
                   children: []
                 },
-                {
+               /*  {
                   id: 14,
                   parentId: 5,
                   index: "1-11",
@@ -85,7 +84,7 @@ export default {
                   description: "",
                   actionIdList: [],
                   children: []
-                },
+                }, */
                 {
                   id: 15,
                   parentId: 6,
@@ -178,7 +177,7 @@ export default {
                   actionIdList: [],
                   children: []
                 },
-                {
+               /*  {
                   id: 43,
                   parentId: 3,
                   index: "4-3",
@@ -197,7 +196,7 @@ export default {
                   description: "",
                   actionIdList: [],
                   children: []
-                },
+                }, */
                /*  {
                   id: 45,
                   parentId: 5,
@@ -210,7 +209,7 @@ export default {
                 }, */
               ]
             },
-            {
+           /*  {
               id: 5,
               parentId: 0,
               index: "5",
@@ -230,7 +229,7 @@ export default {
                   children: []
                 },
               ]
-            },
+            }, */
             {
               id: 6,
               parentId: 0,
@@ -291,7 +290,7 @@ export default {
                   actionIdList: [],
                   children: []
                 },
-                {
+               /*  {
                   id: 72,
                   parentId: 2,
                   index: "7-2",
@@ -300,17 +299,11 @@ export default {
                   description: "",
                   actionIdList: [],
                   children: []
-                },
+                }, */
               ]
             },
           ]
-        },
-        getResultEntity: {
-          code: 0,
-          message: ""
-        },
-        code: 0,
-        message: ""
+        }
       }
     };
   },
@@ -326,9 +319,6 @@ export default {
   methods: {
     itemis() {
       this.items = this.itemslist.data.items;
-    },
-    Refresh() {
-      this.items = window.navigationbar;
     },
     defaultIdex() {
       let path = this.$route.path;

@@ -7,7 +7,7 @@
                      ref="treeList"
                     :props="props"
                     :default-checked-keys="deArrList"
-                    show-checkbox
+
                     :load="loadNode"
                     node-key="id" lazy
                     @check-change="handleCheckChangemedia"
@@ -25,7 +25,7 @@
 	import $ from "jquery";
 	import axios from 'axios'
 	    import {getRegionsbyPid,getRegiondetail} from '@/components/interface/common.js';
-	
+
 
     var treedata = [];
 	var TreeDataId = "";
@@ -84,13 +84,13 @@
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.cities.length;
 		this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
-		console.log(this.checkedCities)
+
 
 
 	  },
 	  //点击省TAB
 	  handleClickCity(tab, event) {
-		console.log(tab, event);
+
 		if(tab.name=="province"){
 			this.postprovince()
 
@@ -101,22 +101,22 @@
 
 
            handleCheckChange(data, checked, indeterminate) {
-				console.log(data, data.id, checked);
+
 			},
 
    handleCheckChangemedia(data, checked, indeterminate) {
-				console.log(data, data.id, checked);
+
 
 
 			},
 				//动态加载树结构
 			handleNodeClick(val, row) {
-				console.log(val, row)
+
 				this.node = row;
 				this.setValue(val, row.parent.data);
 			},
 			loadNode(node, resolve) {
-					console.log(resolve)
+
 				this.resolve = resolve;
 				if(this.data == []) {
 					return false;
@@ -141,7 +141,7 @@
 
 
 			nodeclick(val) {
-					console.log("我需要的位置"),
+
 					this.$store.commit('changtree',val)
 					// if(this.addressHtml==""){
 							this.addressHtml = val.name;
@@ -149,16 +149,14 @@
 	// this.addressHtml = this.addressHtml+'/'+val.name;
 	// 				}
 
-				console.log(this.addressHtml)
+
 				if(val.org_code){
 					this.medialist.push({name:val.name
 				})
 
 				}
 
-				console.log(
-					this.medialist
-				)
+
 
 
 				// console.log("我详细ID" + val.id)
@@ -188,14 +186,14 @@
 				}
 			},
 
-	
+
 		     getChildren(parent, resolve, refresh = false) {
 				// 根据获取孩子节点
 				var _this = this;
 
 
 				if(!refresh && parent.children.length > 0) {
-					 console.log("1111")
+
 					return;
 				}
 				var id = parent.id;
@@ -213,8 +211,7 @@
 					if(res.status===200&&res.data.result=="ok"){
 
 					_this.reLogin(res.data.code);//提示帐号登陆
-				console.log('根据获取孩子节点qqqqqqq')
-					console.log(res.data.data);
+
 
 					let response = res.data.data;
 					var list = response.regions;
@@ -248,7 +245,7 @@
 				}
 
 					// that.updateD();
-					console.log(list)
+
 				}).catch(function(error) {
 					console.log(error);
 				});
@@ -273,7 +270,7 @@
 
 
 				getRegionsbyPid(listpar ).then(function(res) {
-					console.log(res)
+
 
 			if(res.status===200&&res.data.result=="ok"){
 
@@ -284,16 +281,14 @@
 						element["children"] = [];
 					});
 					_this.data = list;
-					console.log('我下面是第一次的数据')
-					console.log(_this.data)
-					console.log(treedata)
+
 					}
 					if(res.data.result=="error"){
 						_this.$message({
 				message: res.data.error_description,
 				type: 'warning'
 			});
-						 console.log(res);
+
 					}
 
 				}).catch(function(error) {
@@ -313,10 +308,10 @@
 					// _this.reLogin(res.data.code); //提示帐号登陆、
 					if(res.status===200&&res.data.result=="ok"){
 					// debugger
-						console.log(res)
+
 						var list=res.data.data.regions
 						_this.regions=list
-							console.log(list)
+
 							if(list[0].name=="市辖区"){
 								 var listpar={
 								"pid":list[0].id,
@@ -346,7 +341,6 @@
 				message: res.data.error_description,
 				type: 'warning'
 			});
-						 console.log(res);
 					}
 				}).catch(function(error) {
 					console.log(error);

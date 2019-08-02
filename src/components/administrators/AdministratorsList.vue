@@ -1,8 +1,10 @@
 <template>
-  <div class="mRight" id="Upgradeview">
+
+
+<div class="mRight" id="Upgradeview">
     <div class="mRightTwo">
       <div class="zForm">
-        <span>姓名或手机号</span><input v-model="zInput" class="zInput" type="text"  placeholder=""/>
+        <span>姓名或手机号</span><input v-model="zInput" class="zInput" type="text" placeholder=""/>
         <button @click="queryVersionList(false)">查询</button>
         <button @click="getVersionList('','all')">全部</button>
         <span class="btnRight"> <button @click="addUp">新增</button></span>
@@ -10,38 +12,39 @@
       <div class="zTable">
         <div class="elTable">
           <!-- <vue-scroll :ops="ops" ref="vs"> -->
-            <div class="scrollbox">
-              <el-table ref="multipleTable"
-                        :data="tableData3" style="width: 100%">
-                <el-table-column prop="phonenum" label="登录账号"></el-table-column>
-                <el-table-column prop="realname" label="管理员姓名">
-                </el-table-column>
-                <el-table-column prop="gender" label="性别">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.gender == 'MALE'">男</span>
-                    <span v-else-if="scope.row.gender == 'FEMALE'">女</span>
-                    <span v-else>未知</span>
-                  </template>
+          <div class="scrollbox">
+            <el-table ref="multipleTable"
+                      :data="tableData3" style="width: 100%">
+                      <el-table-column type="index" label="序号"></el-table-column>
+              <el-table-column prop="phonenum" label="登录账号"></el-table-column>
+              <el-table-column prop="realname" label="管理员姓名">
+              </el-table-column>
+              <el-table-column prop="gender" label="性别">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.gender == 'MALE'">男</span>
+                  <span v-else-if="scope.row.gender == 'FEMALE'">女</span>
+                  <span v-else>未知</span>
+                </template>
 
-                </el-table-column>
+              </el-table-column>
 
-                <el-table-column label="操作">
-                  <template slot-scope="scope">
-                    <a href="javascript:;" class="ml5">
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <a href="javascript:;" class="ml5">
 
-                      <img @click="admineditpust(scope.row)" src="../../assets/edit2.png" alt="">
-                    </a>
-                    <a href="javascript:;" class="ml5" @click="deletelist(scope.row)">
-                      <span>删除</span>
+                    <img @click="admineditpust(scope.row)" src="../../assets/edit2.png" alt="">
+                  </a>
+                  <a href="javascript:;" class="ml5" @click="deletelist(scope.row)">
+                    <span>删除</span>
 
 
-                    </a>
-                  </template>
-                </el-table-column>
+                  </a>
+                </template>
+              </el-table-column>
 
-              </el-table>
+            </el-table>
 
-            </div>
+          </div>
           <!-- </vue-scroll> -->
         </div>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -52,12 +55,12 @@
 
 
     <div id="adminAddModel">
-      <el-dialog :close-on-click-modal="false" title="管理员列表 - 新增" :visible.sync="dialogTableVisibleadd">
-        <el-form :model="admineadd" ref="adminedit" label-width="38%" class="demo-ruleForm">
+      <el-dialog :close-on-click-modal="false" title="管理员列表 - 新增" :visible.sync="dialogTableVisibleadd" :before-close="handleClose">
+        <el-form :model="admineadd" ref="admineadd" label-width="38%" class="demo-ruleForm">
           <div class="formTable">
 
             <div class="block">
-              <el-form-item label="地方：" :rules="[{ required: true, message: ' '}]" prop="region ">
+              <el-form-item label="地区：" :rules="[{ required: true, message: ' '}]" prop="region ">
                 <div class="checkboxBg" @click="showtreebox = true">
                   <div v-html="this.$store.state.treeDatas.name" class="framework"></div>
                 </div>
@@ -82,7 +85,7 @@
             </div>
             <div class="block">
               <el-form-item label="用户：" :rules="[{ required: true, message: ' '}]" prop="VersionNum">
-                <el-input v-model="admineadd.phonenum" maxlength="50"  placeholder="手机号"></el-input>
+                <el-input v-model="admineadd.phonenum" maxlength="50" placeholder="手机号"></el-input>
               </el-form-item>
 
             </div>
@@ -170,18 +173,27 @@
       </el-dialog>
     </div>
   </div>
+
 </template>
 <script>
   import $ from 'jquery'
   import axios from 'axios'
-    import {getRegionsbyPid,getRegiondetail} from '@/components/interface/common.js';
-   import  {getadd_personal_info,adminagetlist_personal_infos,adminagetlistdelete,adminagetlistmodify} from '@/components/interface/administrators.js';
+  import {getRegionsbyPid, getRegiondetail} from '@/components/interface/common.js';
+  import {
+    getadd_personal_info,
+    adminagetlist_personal_infos,
+    adminagetlistdelete,
+    adminagetlistmodify,
+    adminaget_personal_info
+
+  } from '@/components/interface/administrators.js';
 
   import treeview from '../root/tree.vue'
 
   var page = 0;
   var totalNum = false,
     count = 0;
+
   var indexCount = 0;
   var CancelToken = axios.CancelToken;
   var custom = CancelToken.source();
@@ -214,6 +226,7 @@
 
         total: 1,
         checked: false,
+        querybut: false,
         multipleSelection: [],
         dialogTableVisibleadd: false,
         dialogTableVisibleEdit: false,
@@ -311,7 +324,7 @@
           hei = document.documentElement.clientHeight;
         $('.mRightTwo').css('height', hei - 178);
       })
-      this.getVersionList("","");
+      this.getVersionList("", "");
 
       $('.UploadPath').css('display', 'none');
     },
@@ -328,7 +341,7 @@
       closedButton() {
         this.showtreebox = false
         var par = {
-          "id":this.$store.state.treeDatas.id,
+          "id": this.$store.state.treeDatas.id,
           "timestamp": 0
         }
         var _this = this
@@ -340,16 +353,16 @@
             var response = res.data.data.region_details[0];
 
             _this.regions = response
-            console.log(_this.regions);
+            // console.log(_this.regions);
 
 
           }
           if (res.data.result == "error") {
-            _this.$message({
-              message: res.data.error_description,
-              type: 'warning'
-            });
-            console.log(res);
+            // _this.$message({
+            //   message: res.data.error_description,
+            //   type: 'warning'
+            // });
+            // console.log(res);
           }
 
 
@@ -361,15 +374,25 @@
       },
 
 
-
-
       //打开新增lkj
       addUp() {
-        console.log(this.admineadd)
-        this.admineadd
+        // console.log(this.admineadd)
+
         this.percentage = 0
         count = 0
+        this.admineadd = {
 
+          "gender": "MALE",//性别
+          "passwordA": "",//密码
+          "passwordB": "",//密码
+          "phonenum": "",//电话
+          "realname": "",//名字
+          "region_code": "",
+          "region_full_code": "",
+          "region_full_name": "",
+          "region_name": "",
+          "region": ""
+        }
 
         $('#file').val('')
         $('#files').val('')
@@ -388,16 +411,25 @@
           message: '已取消新增',
           type: 'info'
         });
+          this.admineadd = {}
+            this.dialogTableVisibleadd = false;
         custom.cancel()
-        this.dialogTableVisibleadd = false;
-        this.admineadd = {
 
-        }
+
+        this.$store.commit('changtree', [])
+
+      },
+      handleClose(){
+           this.admineadd = {}
+            this.dialogTableVisibleadd = false;
+        custom.cancel()
+
+
         this.$store.commit('changtree', [])
 
       },
       getval(val) {
-        console.log(val);
+        // console.log(val);
         this.FileType = val;
         if (val == '1') {
           $('.UploadPath').css('display', 'none');
@@ -412,10 +444,11 @@
       geterminalType(val) {
         this.add.TerminalType = val.value;
         this.add.TerminalTypeName = val.value;
-        console.log(this.add.TerminalType)
+        // console.log(this.add.TerminalType)
       },
       //新增开始
       addSubmit() {
+        console.log(this.admineadd.phonenum.length)
 
         var flag = true;
         this.admineadd.region = this.$store.state.treeDatas.name
@@ -425,36 +458,36 @@
             type: 'warning'
           });
           flag = false;
-        }
+        }else
         if (this.admineadd.realname == '') {
           this.$message({
             message: '姓名不允许为空',
             type: 'warning'
           });
           flag = false;
-        }
+        }else
 
-        if (this.admineadd.phonenum == '') {
+        if (this.admineadd.phonenum == ''||this.admineadd.phonenum.length!=11) {
           this.$message({
-            message: '用户不允许为空',
+            message: '请输入11位手机号',
             type: 'warning'
           });
           flag = false;
-        }
+        }else
         if (this.admineadd.passwordA == '') {
           this.$message({
             message: '密码不允许为空',
             type: 'warning'
           });
           flag = false;
-        }
+        }else
         if (this.admineadd.passwordB == '') {
           this.$message({
             message: '请确认密码',
             type: 'warning'
           });
           flag = false;
-        }
+        }else
         if (this.admineadd.passwordB != this.admineadd.passwordA) {
           this.$message({
             message: '两次输入密码不相同',
@@ -462,24 +495,39 @@
           });
           flag = false;
         }
+        else if(this.admineadd.phonenum!= ''&&this.admineadd.phonenum.length==11){
+//          console.log("6666")
+          var reg = new RegExp("^((1[0-9]{1})+\\d{9})$");
+          var r = reg.test(this.admineadd.phonenum);
+//          console.log(r)
+          if (r != true) {
+            this.$message({
+              message: "手机不符合要求",
+              type: "warning"
+            });
+            flag = false;
+          }
+
+        }
         this.admineadd.region_code = this.$store.state.treeDatas.id
         this.admineadd.region_name = this.$store.state.treeDatas.name
         this.admineadd.region_full_code = this.regions.ids;
         this.admineadd.region_full_name = this.regions.names
-        var regpar={
-          "gender":  this.admineadd.gender,
-          "password":  this.admineadd.passwordA,
+        var regpar = {
+          "gender": this.admineadd.gender,
+          "password": this.admineadd.passwordA,
           "phonenum": this.admineadd.phonenum,
           "realname": this.admineadd.realname,
-          "region_code":  this.admineadd.region_code,
+          "region_code": this.admineadd.region_code,
           "region_full_code": this.admineadd.region_full_code,
-          "region_full_name":this.admineadd.region_full_name,
+          "region_full_name": this.admineadd.region_full_name,
           "region_name": this.admineadd.region_name
         }
 
 
         var _this = this
         //新增用户个人信息
+      if(flag){
         getadd_personal_info(regpar).then(function (res) {
 
           if (res.status === 200 && res.data.result == "ok") {
@@ -489,10 +537,8 @@
               message: "新增成功",
               type: "success"
             });
-            _this.dialogTableVisibleadd=false;
-            _this.getVersionList("",'');
-
-
+            _this.dialogTableVisibleadd = false;
+            _this.getVersionList("", '');
 
 
           }
@@ -501,7 +547,7 @@
               message: res.data.error_description,
               type: 'warning'
             });
-            console.log(res);
+            // console.log(res);
           }
 
 
@@ -509,10 +555,12 @@
           console.log(error);
         });
 
+        }
       },
 
       //获取列表数据
-      getVersionList(isall,all) {
+      getVersionList(isall, all) {
+       
         this.value = ""
         let _this = this;
         let URL = window.ServerUrl;
@@ -524,20 +572,22 @@
           "page_size": pageSize,
           "search_key": isall
         }
-
-       adminagetlist_personal_infos(par).then(function (res) {
+      
+        adminagetlist_personal_infos(par).then(function (res) {
 
 
           if (res.status === 200 && res.data.result == "ok") {
-            if(isall===''){
-              if(all=="all"){
+            if (isall === '') {
+              if (all == "all") {
+                  _this.querybut=false; 
                 _this.$message({
                   message: "全部数据",
                   type: "success"
                 });
 
               }
-            }else{
+            } else {
+                  _this.querybut=true; 
               _this.$message({
                 message: "查询完成",
                 type: "success"
@@ -546,19 +596,18 @@
             }
 
 
-
             let response = res.data.data.list;
 
             _this.tableData3 = response
 
-            console.log(_this.tableData3)
+            _this.total=res.data.data.page_total_items
+
+
+            // console.log(res)
           }
           if (res.data.result == "error") {
-            _this.$message({
-              message: res.data.error_description,
-              type: 'warning'
-            });
-            console.log(res);
+
+            // console.log(res);
           }
 
         }).catch(function (error) {
@@ -567,23 +616,24 @@
       },
       //查询列表数据
       queryVersionList(isall) {
-        if (this.zInput === "" ) {
+       
+        if (this.zInput === "") {
           this.$message({
             message: '请选择查询项',
             type: 'warning'
           });
         } else {
-         this.getVersionList(this.zInput)
+          this.getVersionList(this.zInput)
         }
       },
 
       //上传文件框
       getFile(e) {
-        console.log(e)
+        // console.log(e)
         this.file = e.target.files[0];
         var file = document.getElementById("files").files[0];
         this.filedata = file;
-        console.log(this.filedata)
+        // console.log(this.filedata)
         document.getElementById("file").value = file.name
         this.add.fileName = file.name
 
@@ -596,7 +646,7 @@
       // 文件上传结束
       changeFun(val) { //复选框
         this.multipleSelection = val;
-        console.log(this.multipleSelection)
+        // console.log(this.multipleSelection)
       },
       handleSizeChange: function (size) {
         this.pagesize = size;
@@ -605,13 +655,53 @@
         this.pagenumber = pagenumber;
         page = this.pagenumber;
         //this.getMenuInfoList();  //获取列表的函数
-        // console.log("search:"+this.value);
-        this.getVersionList("","");
+        console.log("search:"+pagenumber);
+        this.pageChange();
+      },
+      pageChange(){
+       
+        let _this = this;
+        let URL = window.ServerUrl;
+        var pageSize = this.pagesize,
+          pagenumber = this.pagenumber - 1;
+          if(this.querybut!=true){
+            
+            this.zInput=""
+          }
+      
+        var par = {
+          "page_number": pagenumber,
+          "page_size": pageSize,
+          "search_key": this.zInput
+        }
+
+        adminagetlist_personal_infos(par).then(function (res) {
+
+
+          if (res.status === 200 && res.data.result == "ok") {
+          
+
+            let response = res.data.data.list;
+
+            _this.tableData3 = response
+
+            _this.total=res.data.data.page_total_items
+
+
+            // console.log(res)
+          }
+          if (res.data.result == "error") {
+
+            // console.log(res);
+          }
+
+        }).catch(function (error) {
+          console.log(error);
+        });
       },
       //删除
       deletelist(index) {
-        console.log(index)
-        // var cheklength = this.multipleSelection;
+        // console.log(index)
 
         this.$confirm('是否执行删除操作?', '消息', {
           confirmButtonText: '确定',
@@ -620,18 +710,12 @@
         }).then(() => {
           var str = [];
           var _this = this;
-          let URL = window.ServerUrl;
-          // let cheklist = [];
-          // for(let i = 0; i < cheklength.length; i++) {
-          // 	cheklist.push(cheklength[i].versionID)
-          // 	console.log(cheklist)
-          // 	var strlist = cheklist.toString();
-          // }
+
           var delDate = {
             "super_admin_id": index.id
           }
-          console.log(delDate);
-        adminagetlistdeletet(delDate).then(function (res) {
+          // console.log(delDate);
+          adminagetlistdelete(delDate).then(function (res) {
 
 
             if (res.status === 200 && res.data.result == "ok") {
@@ -640,11 +724,11 @@
                 message: '删除成功',
                 type: 'success'
               });
-              _this.getVersionList("","");
+              _this.getVersionList("", "");
             } else {
-              if (res.data.code == window.code) return;
+
               _this.$message({
-                message: res.data.getResultEntity.message,//后台没有message
+                message: res.data.error_description,//后台没有message
                 type: 'info'
               });
             }
@@ -665,16 +749,45 @@
       //点击编辑按钮
 
       admineditpust(row) {
-        console.log(row)
-        this.adminedit = row;
+         let _this = this;
+          //修改用户个人信息
+       var  par=  {
+              "account":row.phonenum
+            }
+
+
+        adminaget_personal_info(par).then(function (res) {
+
+
+          if (res.status === 200 && res.data.result == "ok") {
+
+
+                 _this.adminedit = res.data.data
+
+
+          }
+          if (res.data.result == "error") {
+
+           _this.$message({
+                message: "系统错误：错误指令"+res.data.error_description,//后台没有message
+                type: 'info'
+              });
+          }
+
+        }).catch(function (error) {
+
+        });
+
+
         this.dialogTableVisibleEdit = true;
 
 
       },
       //编辑提交
       editSubmit() {
-        console.log(this.adminedit)
+        // console.log(this.adminedit)
         let _this = this;
+        var flag = true;
         let URL = window.ServerUrl;
 
 
@@ -685,51 +798,93 @@
           "gender": this.adminedit.gender
 
         }
+        if (this.adminedit.realname == '') {
+          this.$message({
+            message: '地区不允许为空',
+            type: 'warning'
+          });
+          flag = false;
+        }else
+        if (this.adminedit.phonenum == '') {
+          this.$message({
+            message: '姓名不允许为空',
+            type: 'warning'
+          });
+          flag = false;
+        }else
+
+        if (this.adminedit.phonenum == ''||this.admineadd.phonenum.length!=11) {
+          this.$message({
+            message: '请输入11位手机号',
+            type: 'warning'
+          });
+          flag = false;
+        }
+        else if(this.adminedit.phonenum!= ''&&this.adminedit.phonenum.length==11){
+//          console.log("6666")
+          var reg = new RegExp("^((1[0-9]{1})+\\d{9})$");
+          var r = reg.test(this.admineadd.phonenum);
+//          console.log(r)
+          if (r != true) {
+            this.$message({
+              message: "手机不符合要求",
+              type: "warning"
+            });
+            flag = false;
+          }
+
+        }
+
         //修改用户个人信息
-       adminagetlistmodify(par).then(function (res) {
+        if(flag ){
+          adminagetlistmodify(par).then(function (res) {
 
 
-          if (res.status === 200 && res.data.result == "ok") {
+            if (res.status === 200 && res.data.result == "ok") {
 
-            _this.$message({
-              message: "编辑成功",
-              type: 'success'
-            });
-            _this.adminEditModel = false
+              _this.$message({
+                message: "编辑成功",
+                type: 'success'
+              });
+              _this.dialogTableVisibleEdit = false
 
-            _this.getVersionList()
-          }
-          if (res.data.result == "error") {
-            _this.$message({
-              message: res.data.error_description,
-              type: 'warning'
-            });
-            console.log(res);
-          }
+              _this.getVersionList("", "")
+            }
+            if (res.data.result == "error") {
+              _this.$message({
+                message: res.data.error_description,
+                type: 'warning'
+              });
+              // console.log(res);
+            }
 
-        }).catch(function (error) {
-          console.log(error);
-        });
+          }).catch(function (error) {
+            console.log(error);
+          });
+
+
+        }
 
       },
       editCancel() {
-
+  this.dialogTableVisibleEdit=false;
+  this.adminedit={}
       },
       //性别
       genderchange(a) {
-        console.log(a)
+        // console.log(a)
 
 
       },
       enabledlick(a) {
-        console.log(a)
+        // console.log(a)
 
       },
 
 
     },
     beforeDestroy() {
-      console.log("beforeDestroy")
+      // console.log("beforeDestroy")
       this.$store.commit('changtree', [])
 
     },
@@ -867,7 +1022,7 @@
   .block {
     float: left;
     width: 50%;
-    height: 40px;
+    height: 50px;
     overflow: hidden;
     /* border:2px #4a567c solid; */
   }
@@ -883,11 +1038,12 @@
   .block .blockleft {
     margin-left: 30%
   }
-
+  /* 根据自己的输入框边框设置 =  */
+  /* 使用足够大的纯色阴影来覆盖input输入框黄色背景颜色  */
   .passwordinput input {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
-  / / 使用足够大的纯色阴影来覆盖input输入框黄色背景颜色 border: 1 px solid #666 !important;
-  / / 根据自己的输入框边框设置 = -webkit-box-shadow: 0 0 0 px 1000 px white inset;
+  border: 1 px solid #666 !important;
+  -webkit-box-shadow: 0 0 0 px 1000 px white inset;
 
   }
 
@@ -1026,8 +1182,8 @@
     top: 116px;
     left: 19%;
     position: absolute;
-    width: 290px;
-    height: 175px;
+    width: 300px;
+    height: 250px;
     z-index: 99;
     background-color: #354166;
     border: 2px #3b4872 solid;
@@ -1049,11 +1205,11 @@
 
   }
 
-  .passwordinput input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #2a3558 inset;
-    border: 1px solid #3b4872 !important;
-    background-color: #2a3558
-  }
+input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+      border: 1px solid #ffffff !important;
+      background-color: #ffffff;
+    }
 
   #adminAddModel .submit2 {
     float: left;
@@ -1134,6 +1290,7 @@
 
   #adminAddModel .el-dialog {
     width: 1100px;
+
     top: 50%;
   }
 

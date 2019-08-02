@@ -19,14 +19,14 @@ service.interceptors.request.use(config => {
 
     //let token = JSON.parse(localStorage.person).token;  // localStorage
     let token = localStorage.Accesstoken;  // localStorage
-
-    console.log('token----' + token)
+  // console.log(token);
 
     if (config.url.indexOf('/login') < 0) {
-        if (token === null) {
-            console.log('未登录');
+        if (token === null||token ===undefined) {
+            // console.log('未登录');
             // 跳转 登录页面
         } else {
+
             config.headers.common['Authorization'] = 'Bearer ' + token;
             //config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
             if (config.url.indexOf('?') < 0) {

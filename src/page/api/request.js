@@ -3,6 +3,8 @@ import axios from 'axios';
 // import qs from 'qs';
 
 
+//var BASE_API = window.ServerUrl;
+
 var BASE_API = window.ServerUrl;
 
 console.log('接口地址API：' + BASE_API)
@@ -46,8 +48,10 @@ service.interceptors.request.use(config => {
 // 响应拦截器 拦截登录请求
 /* service.interceptors.response.use(
     response => {
-        if (response.data.errorCode == 11001) {
-            location.href = 'http://' + location.host + '/login';
+        // 权限验证
+        if (response.data.resultCode == "401") {
+            //location.href = 'http://' + location.host + '/login';
+            console.log('token');
         }
         return response;
     },

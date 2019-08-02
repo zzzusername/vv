@@ -1,104 +1,60 @@
 <template>
-	<div id="address" class="mRight">
-		<div class="addressList">
+	<div id="resoure" class="mRight">
+		<div class="resoureList">
 			<div class="zForm">
-				<span class="paddingLeft">查询方式：</span><input class="zInput" type="text" placeholder="" />
-				<span class="paddingLeft">名称： </span><input class="zInput" type="text" placeholder="" />
-                <button class="buttonradius">查询</button>
-                <button class="buttonradius">清空</button>
-                <button class="buttonradius" @click="addPermissiondata(false)">编辑</button>
-                
+				<span class="paddingLeft">查询方式：</span>
+				<div class="zSelect">
+					<el-select v-model="queryValue" class="zgroup" placeholder="--请选择--">
+						<el-option v-for="item in queryData" 
+						:key="item.index"  :label="item.value" :value="item.index"></el-option>
+					</el-select>
+				</div>
+				<span class="paddingLeft">名称： </span><input v-model="keyName" class="zInput" type="text" placeholder="" />
+                <button class="buttonradius" @click="findData">查询</button>
+                <button class="buttonradius" @click="clearData">清空</button>
 			</div>
-		</div>
-        <!-- 新增权限分组 -->
-		<div id="userAddModel3">
-			<el-dialog
-					class="permissionForm"
-					title="新增权限分组"
-					:visible.sync="editPermission"
-					:before-close="closePermission"
-					width="50%"
-					>
-					<el-form ref="perForm" :model="perForm" label-width="120px">
-						<div class="formTable">
-							<div class="block block-line">
-								<el-form-item label="企业名称："  prop="name">
-									<el-input v-model="perForm.name" maxlength="50"></el-input>
-								</el-form-item>
-							</div>
-							<div class="block">
-								<el-form-item label="联系人："  prop="name">
-									<el-input v-model="perForm.contact" maxlength="50"></el-input>
-								</el-form-item>
-							</div>
-							<div class="block">
-								<el-form-item label="手机号："  prop="name">
-									<el-input v-model="perForm.phone" maxlength="50"></el-input>
-								</el-form-item>
-							</div>
-							<div class="block block-line">
-								 <!-- 平台多选 -->
-								<el-form-item id="platClass" label="报警接收平台:">
-								<el-select
-									v-model="perForm.platValue"
-									multiple
-									collapse-tags
-									style="height: 40px;"
-									placeholder="请选择"
-								>
-									<el-option
-									v-for="item in perForm.addressData"
-									:key="item.index"
-									:value="item.value"
-									></el-option>
-								</el-select>
-								</el-form-item>
-							</div>
-
-							<div class="block" style="width:96.5%;">
-							<!-- 监控 ／ 终端 tab切换-->
-							<el-tabs v-model="activeName" @tab-click="handleClick" id="tabCard" style="padding:0 10px;">
-							<el-tab-pane label="监控资源分配：" name="first">
-								<div class="tabCont">
-								<div class="hd">
-									<span>已添加资源目录</span>
-									<el-button size="small" class="clear">清空</el-button>
-								</div>
-								<div class="bd">
-									<div class="hd-l">
-										<!-- 默认勾选 数据 -->
-										<!-- 
-											:load="loadNode"
-											node-key="id"
-  											:default-checked-keys=this.efaultCheckedkeys
-											lazy
-										-->
-										<el-tree
-											ref="treeRef"
-											:props="defaultProps"
-											:data="monitoringData"
-											node-key="name"
-											:default-checked-keys="['西城区']"
-											@check-change="handleCheckChange"
-											show-checkbox>
-										</el-tree>
-									</div>
-									<div class="hd-r">
-										<li v-for="item in presentationSubmitteddata" :key="item.key">{{item.name}}</li>
-									</div>
-								</div>
-								</div>
-							</el-tab-pane>
-							<el-tab-pane label="终端通讯录分配：" name="second">终端通讯录分配：</el-tab-pane>
-							</el-tabs>
-							</div>
-							<span slot="footer" class="dialog-footer">
-								<el-button >取 消</el-button>
-								<el-button type="primary">确 定</el-button>
-							</span>
-						</div>
-					</el-form>
-			</el-dialog>
+			<div class="showData">
+				<!-- tree 选中展示数据 -->
+				<!-- :render-content="renderContent" 指定渲染函数 -->
+				<div class="tree" id="treeDatacont">
+					<el-tree
+						ref="treeRef"
+						:props="defaultProps"
+						:data="InitializeData"
+						:load="loadNode"
+						lazy
+						@node-click="handleNodeClick"
+						:render-content="renderContent"
+						>
+					</el-tree>
+				</div>
+				<!-- table -->
+				<div class="elTable">
+					<div class="scrollbox">
+						<el-table
+						:data="tableData"
+						>
+							<el-table-column prop="name" label="终端名称"></el-table-column>
+							<el-table-column prop="devno" label="终端号"></el-table-column>
+							<el-table-column prop="" label="终端状态" width="100px">
+								<template >
+									<span>空闲</span>
+								</template>	
+							</el-table-column>
+						</el-table>
+					</div>
+					<!-- page -->
+					<el-pagination
+						@current-change="handleCurrentChange" 
+						:current-page.sync="page_total_pages" 
+						:page-size="page_size" 
+						layout="total, prev, pager, next, jumper" 
+						:total="page_total_items"
+						class="zPage"
+						>
+					</el-pagination>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -108,199 +64,299 @@
     /* 展示弹窗样式文件 */
     import '../../style/common.css' /*引入公共样式*/
 	// js
-    import {heightAuto} from '../../untils/heightAuto' //注意路径
-    
-    // 获取行政区详情	getRegiondetail
-	// 获取下级行政区域  getRegionsbyPid
-	import { getRegiondetail, getRegionsbyPid} from '@/page/api/commonapi';
-	/* 编辑接口 */
-	import { modifyEnterprise, getEnterprisinfo} from '@/page/api/commonapi';
-
+	import {heightAuto} from '../../untils/heightAuto' //注意路径
+	/* api */
+	// getTerminallist  列出指定单位下的终端设备信息
+	// listRootterminalRegionpath  列出当前企业分配的终端通讯录地区目录路径
+	// listRootterminalRegions  列出当前企业分配的终端通讯录地区目录
+	// listSubterminalRegionsdeparts  列出终端通讯录子级地区目录和单位
+	// listTerminaldeparts  列出终端通讯录子级单位
+	// getTerminalsearch  搜索终端设备信息
+	// getSearchterminalRegions  搜索终端通讯录地区目录
+	import {
+		getTerminallist,
+		listRootterminalRegionpath,
+		listRootterminalRegions,
+		listSubterminalRegionsdeparts,
+		listTerminaldeparts,
+		getTerminalsearch,
+		getSearchterminalRegions,
+		} from '../../api/addressbook'
 	export default {
         data() {
 			return {
-                /* 权限分组弹窗 */
-				editPermission : false,
-				perForm : {
-					name: "企业名称",
-					phone: "15116965192",
-					contact : '联系人',
-					// 报警平台需选择
-					addressData: [
-						{
-							index: "1",
-							value: "海淀GIS平台（负责人：张珊，13811112222）"
-						},
-						{
-							index: "2",
-							value: "东城GIS平台（负责人：张珊，13811112222）"
-						}
-					],
-					platValue: "1",
-				},
-				// tab 切换
-				activeName: "first",
-				// tree 初始化数据
-				monitoringData: [
+				// 查询方式 接口切换
+				queryData : [
+					/* {
+						value : '地区',
+						index : '1',
+					}, */
 					{
-						id: "110000000000",
-						name: "北京市",
-						pid: "1",
-						children : [
-								{
-									id: "110100000000",
-									name: "市辖区",
-									pid: "2",
-									children : [
-										{
-											id: "110101000000",
-											name: "东城区",
-											pid: "3",
-										},
-										{
-											id: "110102000000",
-											name: "西城区",
-											pid: "4",
-										},
-									]
-								}
-						],
-					},
+						value : '终端号码或终端名称',
+						index : '2',
+					}
 				],
+				// 查询方式 接口判断 参数
+				queryValue : '',
+				keyName : '',
+				// 企业id
+				enterpriseId :  localStorage.EnterpriseId,
+				// 初始化 tree 数据
+				InitializeData: [],
 				defaultProps: {
 					children: 'children',
           			label: 'name'
 				},
-				/* 默认勾选数据数组 */
-				efaultCheckedkeys : [110102000000],
-				// 右侧展示的提交数据
-				presentationSubmitteddata : [],
+				initData :  {
+					"area_code": "11",
+					"name": "北京",
+					"parent_code": "0",
+					"platform_id": 1,
+					"total_count": 34649,
+					"online_count": 10279,
+					"fault_count": 20333,
+					"health_count": 10279,
+					"secrecy_count": 0
+				},
+				tableData: [],
+				// 图片弹窗
+				centerDialogVisible: false,
+				// 原图地址
+				originalImage : '',
+				// 查看详情数据
+				detailData : {},
+				// 详情
+				detailPop : false,
+				// 右侧监控数据缓存数据 分页使用
+				monitoring : {},
+				/* 分页相关 */
+				page_size : 10,			//  请求多少条目
+				page_total_items : 0,  // 总条数
+				page_total_pages : 1,  //  当前条数
 			}
 		},
-		mounted: function() {
-			let row = '.addressList'
-            heightAuto(row)
-            // 获取 tree 数据
-			//this.getTreedata();
-			// 循环获取tree 数据
-			this.cyclicLoadingdata();
-		},
 		methods:{
-            /* 权限组弹窗 */
-			// 新增 true ／ 编辑 false
-			addPermissiondata(type,data){
-				if(type){
-					console.log('新增')
-				}else{
-					console.log('编辑')
-					// ajax getEnterprisinfo 查询企业信息
-                       let objData = {
-                            "enterprise_id": "f940dc43-b8d8-4232-b2a2-09b5086ece97"
-                        }
-					// 编辑 查询企业信息
-					getEnterprisinfo(objData).then(res => { 
-                        console.log(res.data.data.monitor_resource_organizations);
-						//console.log('选中树枝名称')
-						//console.log(res.data.data.monitor_resource_organizations[0].region_name);
-					});	
+			// 初始化数据
+			getInitdata(){
+				let objData = {
+					"enterprise_id": this.enterpriseId,
 				}
+				// 初始化数据接口
+				listRootterminalRegionpath(objData).then(res => {
+					// 数据处理
+					let arrayAll = res.data.data;
+					let newArry = [];
+					arrayAll.map(function(item, index){
+						let len = item.length;
+						item.map(function(item,index){
+							// 判断是否是最后一项
+							if(len - 1 == index){
+								newArry.push(item);
+							}
+						})
+					})
+					// 赋值数组  后续需要 反查根目录
+					this.InitializeData = newArry;
+				});	
 				
-				this.editPermission = true;
-            },            
-			closePermission(){
-				console.log('关闭权限弹窗')
-				this.editPermission = false;
+				console.log(this.InitializeData);
+
 			},
-			//  权限组弹窗 tab 切换
-			handleClick(tab, event) {
-				console.log(tab, event);
-            },
-            
+			// 地区查询接口
+			getTregiondata(){
+				let objData = {
+					"enterprise_id": this.enterpriseId,
+					"is_security": true,
+					"search_text": this.keyName
+				}
+			},
+			// 终端查询接口
+			getMonitordata(){
+
+				let objData = {
+					"enterprise_id": this.enterpriseId,
+					"search_text": this.keyName,
+					"page_number": this.page_total_pages - 1,
+  					"page_size": 10,
+				}
+				// 搜索终端设备信息
+				getTerminalsearch(objData).then(res => {
+					if (res.status === 200 && res.data.result == "ok") {
+						this.tableData = res.data.data.list
+						//  总条数
+						this.page_total_items = res.data.data.page_total_items; 
+						this.page_total_pages = res.data.data.page_number - 0 + 1;
+					}else{
+						// 错误提示信息
+						this.$message.error(res.data.error_description);
+					}
+					
+				});	
+			},
+			// 查询
+			findData(){
+				// 判断 输入框是否为空
+				if(this.keyName == ''){
+					this.$message.error('请输入名称')
+				}
+				// 判断调用接口
+				if(this.queryValue == ''){
+					this.getInitdata();
+				}else if(this.queryValue == '1'){
+					this.getTregiondata();
+				}else if(this.queryValue == '2'){
+					this.page_total_items = 0; 
+					this.page_total_pages = 1;
+					this.getMonitordata();
+				}
+
+			},
+			clearData(){
+				this.queryValue = '';
+				this.keyName = '';
+				// 初始化接口
+				this.getInitdata();
+				// 右侧信息清空
+				this.tableData = [];
+				this.page_total_items = 0; 
+				this.page_total_pages = 1;
+
+			},
 			// tree 结构解析 点击下拉加载数据
 			loadNode(node, resolve) {
-				let treeRootstate = node.checked;
+				let nodeData = this.InitializeData;
 				if (node.level === 0) {
-					return resolve(this.monitoringData);
+				 	return resolve(nodeData);
 				}
+				// 判断是否存在 unit_pid  
+				// 存在 则为单位查询  不存在则为终端通讯录查询
+				if(node.data.unit_id){
+					//  加载子单位
+					if(node.data.unit_id != '-1'){
+						console.log(node.data.unit_id)
+						console.log('单位存在子节点 查询')
+						let objData = {
+							"enterprise_id": this.enterpriseId,
+							"unit_pid": node.data.unit_id
+						}
+						// 异步函数加载 子节点   单位
+						listTerminaldeparts(objData).then(res => {
+							if (res.status === 200 && res.data.result == "ok") {
+								let  childArray = res.data.data
+								childArray.map(function(item,inde){
+									item.isMerge = true;
+								})
+								resolve(childArray);
+							}
+							
+						});
 
-				let obj = {
-					"pid": node.data.id,
-					"timestamp": 0
-				}
-				// 异步函数加载当前id 下子节点
-				getRegionsbyPid(obj).then(res => {
-					// 数据处理
-					// 判断当前的是否选中
-					// true 选中  false 未选中
-					// 注入数据
-					resolve(res.data.data.regions)
-				});
-			},
-			// 节点选中状态发生变化时的回调
-			handleCheckChange(data, checked, indeterminate){
-				let _this = this;
-				// 获取所有变动数据
-				let res = this.$refs.treeRef.getCheckedNodes()
-				let checkedArray = []
-				// data  复制
-				res.forEach((item) => {
-					checkedArray.push(item)
-				})
-				// 赋值函数
-				this.assignment(checkedArray);
-			},
-			// 赋值函数
-			assignment(data){
-				this.presentationSubmitteddata = data;
-			},
-			 // 监控数据点击
-			handleNodeClick(){
-				console.log('111')
-			},
-			// 获取 tree 初始化数据 已经选中的数据
-			getTreedata(){
-				// 获取行政区详情
-				let obj = {
-					"pid": "000000000000",
-					"timestamp": 0
-				}
-				getRegionsbyPid(obj).then(res => {
-					console.log(res.data.data.regions)
-					this.monitoringData = res.data.data.regions
-				})
-			},
-			// 循环 tree 根数据判断
-			// 根据  父亲节点 循环查找数据
-			// 获取根节点信息  默认为北京
-			// 子节点数据默认为西城区
-			cyclicLoadingdata(){
-				let treeBranches = {
-						id: "110102000000",
-						name: "西城区",
-						pid: "110100000000",
+					}else{
+						resolve([]);
 					}
-				// 根据  父亲节点 循环查找数据
-				let tree = {
-						"pid": "110000000000",
-						"timestamp": 0,
+				}else{
+					// 加载子地区
+					let objData = {
+						"enterprise_id": this.enterpriseId,
+						"parent_region_code": node.data.region_code
 					}
+					// 异步函数加载 子节点 地区
+					listSubterminalRegionsdeparts(objData).then(res => {
+						if (res.status === 200 && res.data.result == "ok") {
+							let directArray = [];
+							let subTerminalarray = [];
+							let newArry = [];
+							if(res.data.data.direct_terminal_departs){
+								directArray = res.data.data.direct_terminal_departs;
+							}
+							if(res.data.data.sub_terminal_regions){
+								subTerminalarray = res.data.data.sub_terminal_regions;
+							}
+							// 遍历添加标记
+							directArray.map(function(item,inde){
+								item.isMerge = true;
+							})
+							//	 合并数组
+							newArry = subTerminalarray.concat(directArray)
+							// 合并渲染tree
+							resolve(newArry);
+						}
+					});
+				}
+			},
+			// 节点点击的回调函数
+			handleNodeClick(data){
+				// 清空分页缓存
+				this.page_total_items = 0; 
+				this.page_total_pages = 1;
+				// 缓存信息
+				this.monitoring = data;
+				this.monitoringInformationlist(data)
+				
+			},
+			// 节点点击查询监控信息列表
+			monitoringInformationlist(data){
 
-				getRegionsbyPid(tree).then(res => {
-					console.log(res) 
-				})
+				console.log(data);
+				// 参数
+				let objData = {
+					"enterprise_id": this.enterpriseId,
+					"page_number":this.page_total_pages - 1,
+					"page_size": 10,
+					"unit_id" : data.unit_id
+				}
+				// 是否存在
+				if(data.unit_id){
+					// 查询
+					if(data.unit_id == '-1'){
+						objData.region_code = data.region_code
+					}
+					/* 右侧信息渲染 */
+					getTerminallist(objData).then(res => {
+						this.tableData  = res.data.data.list;
+						// 总条数 
+						this.page_total_items = res.data.data.page_total_items; 
+						this.page_total_pages = res.data.data.page_number - 0 + 1;
+					});
+				}
+				
+			},
+			// tree 节点渲染函数
+			renderContent(h, { node, data, store }) {
+				return (
+					<span 
+					style="flex: 1; display: flex; align-items: center; justify-content: 
+					space-between; font-size: 14px; padding-right: 8px;">
+					<span>
+						<span style = {{color: (data.isMerge) ? "#57e29b" : "#fff"}}>{node.label}</span>
+					</span>
+					<span>
+						</span>
+					</span>
+				)
 				
 			},
 			// page
-			handleSizeChange(size) {
-				this.pagesize = size;
-			},
 			handleCurrentChange(currentPage) {
-				this.currentPage = currentPage;
-				console.log("我是页码" + this.currentPage);
-				Page = this.currentPage;
-				console.log(Page);
+				this.page_total_pages = currentPage;
+				// 判断 全局查询状态
+				if(this.queryValue == ''){
+					// 模拟左侧点击事件 分页渲染
+					this.monitoringInformationlist(this.monitoring);
+				}else if(this.queryValue == '2'){
+					// 点击查询右侧信息接口
+					this.getMonitordata();
+				}
 			},
-        },
+		},
+		mounted: function() {
+			let row = '.resoureList'
+			heightAuto(row)
+			this.getInitdata();
+		},
+		computed: {
+			
+		},
 	}
 	
 </script>
@@ -328,19 +384,65 @@
 .zPage{
 	margin-top: 50px;
 }
-.tabCont .hd-l, .tabCont .hd-r{
-	height: 200px;
-	max-height: 200px;
-	overflow-y: auto
+/* 内容展示 */
+.showData{
+	margin-top: 20px;
+    overflow: hidden;
+   	border: 1px solid #4a567c;
 }
-.tabCont .hd-r{
-	width: 30%;
-}   
+.showData .tree{
+	margin-right: 20px;
+    padding-top: 20px;
+	float: left;
+	width: 40%;
+	border: 1px solid #4a567c;
+	height: 500px;
+	overflow-y: auto;
+}
+.showData .elTable{
+    padding-top: 20px;
+	float: left;
+	width: 55%;
+}
+.imgSamll{
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+}
+.imgCont{
+	position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+	left: 0;
+	background: rgba(238,238,238,.5);
+    overflow: auto;
+}
+.imgCont img{
+	position: absolute;
+    left: 50%;
+    top: 50%;
+	transform: translate(-50%, -50%);
+}
+#zDialogtext .block{
+	width: 100%;
+}
+#zDialogtext .block li{
+	width: 50%;
+}
+#zDialogtext .block .inline{
+	width: 100%;
+}
+#zDialogtext .block .inline .liL{
+	width: 20%;
+}
+#zDialogtext .block .inline .liR{
+	width: 80%;
+}
 </style>
-
 <style lang="scss">
-	#address {
-		.addressList {
+#resoure {
+		.resoureList {
 			padding: 34px 42px;
 			margin: 15px 27px 15px 15px;
 			background: #354166;
@@ -443,308 +545,95 @@
 			padding-left: 38px;
 		}
 	}
-	@media screen and (max-width: 1440px) {
-		#address {
-			.mRightTwo {
-				.paddingLeft {
-					padding-left: 10px;
+@media screen and (max-width: 1440px) {
+	#resoure {
+		.mRightTwo {
+			.paddingLeft {
+				padding-left: 10px;
+			}
+			.zForm {
+				button {
+					height: 30px;
+					font-size: 12px !important;
+					line-height: 30px;
+					padding-left: 8px;
+					padding-right: 8px;
 				}
-				.zForm {
-					button {
-						height: 30px;
-						font-size: 12px !important;
-						line-height: 30px;
-						padding-left: 8px;
-						padding-right: 8px;
-					}
-					span {
-						font-size: 12px !important;
-					}
-					span.btnRight {
-						float: left;
-						/*margin-top: 10px;*/
-					}
-					.zInput {
-						width: 100px !important;
-						height: 28px;
-						line-height: 28px;
-					}
-					.zgroup {
-						height: 30px;
-					}
-					.zSelect {
-						float: left;
-						width: 106px;
-					}
+				span {
+					font-size: 12px !important;
 				}
-				.zTable {
-					clear: both;
-					height: 94%;
-					overflow: hidden;
-					padding-top: 26px;
-					.elTable {
-						height: 82%;
-						.el-table td {
-							padding: 4px 0;
-						}
+				span.btnRight {
+					float: left;
+					/*margin-top: 10px;*/
+				}
+				.zInput {
+					width: 100px !important;
+					height: 28px;
+					line-height: 28px;
+				}
+				.zgroup {
+					height: 30px;
+				}
+				.zSelect {
+					float: left;
+					width: 106px;
+				}
+			}
+			.zTable {
+				clear: both;
+				height: 94%;
+				overflow: hidden;
+				padding-top: 26px;
+				.elTable {
+					height: 82%;
+					.el-table td {
+						padding: 4px 0;
 					}
 				}
 			}
 		}
 	}
-	@media screen and (max-width: 1366px) {
-		#address .mRightTwo .el-dialog .el-dialog__body{
-			padding: 24px 24px 10px;
-		}
-		#address {
-			.mRightTwo {
-				.paddingLeft {
-					padding-left: 10px;
+}
+@media screen and (max-width: 1366px) {
+	#resoure .mRightTwo .el-dialog .el-dialog__body{
+		padding: 24px 24px 10px;
+	}
+	#resoure {
+		.mRightTwo {
+			.paddingLeft {
+				padding-left: 10px;
+			}
+			.zForm {
+				button {
+					height: 30px;
+					font-size: 12px !important;
+					line-height: 30px;
+					padding-left: 5px;
+					padding-right: 5px;
 				}
-				.zForm {
-					button {
-						height: 30px;
-						font-size: 12px !important;
-						line-height: 30px;
-						padding-left: 5px;
-						padding-right: 5px;
-					}
-					span {
-						font-size: 12px !important;
-					}
-					span.btnRight {
-						float: left;
-					}
-					.zInput {
-						width: 80px !important;
-						height: 28px;
-						line-height: 28px;
-					}
-					.zgroup {
-						height: 30px;
-					}
-					.zSelect {
-						float: left;
-						width: 104px;
-					}
+				span {
+					font-size: 12px !important;
 				}
-				.el-select-dropdown__item {
-					font-size: 12px;
+				span.btnRight {
+					float: left;
+				}
+				.zInput {
+					width: 80px !important;
+					height: 28px;
+					line-height: 28px;
+				}
+				.zgroup {
+					height: 30px;
+				}
+				.zSelect {
+					float: left;
+					width: 104px;
 				}
 			}
+			.el-select-dropdown__item {
+				font-size: 12px;
+			}
 		}
-    }
-	/* 弹窗样式重置 */
-	.block{
-		width: 50%;
-		float: left;
 	}
-	.block-inline{
-		width: 100%;
-	}
-	.block .el-input__inner{
-		height: 36px;
-		margin: 2px 0;
-		line-height: 36px;
-		border: 1px solid #3b4872;
-	}
-    .block, .formTable, .el-dialog__body{
-        overflow: hidden;
-    }
-    .formTable{
-        padding: 2px 4px;
-        background: #4a567c;
-        margin-bottom: 20px;
-    }
-    .block .el-form-item__label{
-        height: 36px;
-        margin: 2px 0;
-        line-height: 36px;
-        border: 1px solid #3b4872;
-    }
-    #userAddModel2 .el-form-item {
-		margin: 0;
-		padding: 0;
-		width: 91%;
-		float: left;
-    }
-    .infoMsg{
-        padding-left: 9px;
-        display: inline-block;
-        margin-top: 10px;
-    }
-    .checkboxBg{
-        width: 94%;
-        height: 34px;
-        margin: 2px 0;
-        line-height: 34px;
-        padding-left: 12px;
-        background: #2a3558;
-        border: 1px solid #3b4872;
-        text-align: left;
-    }
-    .el-dialog .textarea .el-form-item__label{
-        height: 160px;
-    }
-    .textarea{
-        clear: both;   
-        width: 100%;
-        height: 70px;
-        background: #4a567c;
-        font-size: 14px;
-        padding: 10px;
-	}
-	/* 弹窗 上传文件 */
-	#upLoadpop .el-form-item__label{
-		width: 19%!important;
-		margin: 2px 0;
-		line-height: 80px;
-		background: #1b274c;
-		border: 1px solid #3b4872;
-	}
-	#upLoadpop .filebtn{
-		float: left;
-		color: #fff;
-		width: 90px;
-		height: 36px;
-		background: #4a567c;
-		border-radius: 3px;
-		position: absolute;
-		z-index: 19;
-		line-height: 36px;
-		text-align: center;
-		left: 0;
-		top: 0;
-	}
-	#upLoadpop .el-form-item__content{
-		width: 84%;
-    	margin-left: 19%!important;
-	}
-	#upLoadpop .uploadBg{
-		width: 100%;
-    	height: 80px;
-		margin: 2px 0;
-		text-align: left;
-		line-height: 44px;
-		padding-left: 10px;
-		background: #2a3558;
-		border: 1px solid #3b4872;
-	}
-	#upLoadpop .filegroup{
-		overflow: hidden;
-	}
-	#upLoadpop .iptvImg{
-		margin-right: 10px;
-		margin-top: 15px;
-		float: left;
-		width: 100px;
-		height: 60px;
-		overflow: hidden;
-	}
-	#uploadForm{
-		float: left;
-		width: 60%;
-		margin-top: 7px;
-		display: block;
-		overflow: hidden;
-	}
-	#uploadForm .formLeft{
-		float: left;
-		width: 60%;
-		height: 36px;
-		overflow: hidden;
-		margin-top: 16px;
-		position: relative;
-	}
-	#uploadForm .formRight{
-		float: left;
-		overflow: hidden;
-		margin-top: 16px;
-	}
-	#upLoadpop .fileUpbtn{
-		float: left;
-		color: #fff;
-		width: 80px;
-		height: 36px;
-		cursor: pointer;
-		background: #4a567c;
-		border-radius: 3px;
-		line-height: 36px;	
-		text-align: center;
-	}
-	#files{
-		position: relative;
-		top: -4px;
-		left: 29px;
-	}
-	#reason{
-		height: 60px;
-		overflow: hidden;
-		padding: 0;
-	}
-	#reason .el-form-item{
-		width: 100%;
-		height: 60px;
-		line-height: 60px;
-	}
-	#reason .el-form-item__content{
-		margin-left: 17%!important;
-	}
-	#reason .el-form-item__label{
-		width: 17%!important;
-		height: 100%;
-		margin: 2px 0;
-	}
-	#reason .el-textarea{
-		margin-left:2px;
-		width: 60%!important;
-		float: left;
-		height: 100%;
-	}
-	/* 弹窗详情 左右 */
-	#zDialogtex #detailW2{
-		overflow: hidden;
-	}
-	#detailW2 li{
-		width: 47%!important;
-		margin: 0;
-	}
-	#detailW2 li:nth-child(2n){
-		margin-left: 6%;
-    }
-    
-    /* 测试删除样式 */
-
-	#userAddModel3 .el-form-item {
-		margin: 0;
-		padding: 0;
-		width: 91%;
-		float: left;
-	}
-	#userAddModel3 .block-line .el-form-item{
-		width: 95.5%;
-	}
-	#userAddModel3 .el-input__inner{
-		height: 36px;
-		margin: 2px 0;
-		line-height: 36px;
-		border: 1px solid #3b4872;
-	}
-	#userAddModel3  .el-form-item__label{
-		height: 36px;
-		margin: 2px 0;
-		line-height: 36px;
-		background: #1b274c;
-		border: 1px solid #3b4872;
-	}
-	#userAddModel3 .el-tag--info, #platClass .el-select .el-tag{
-		background-color: #9093991a;
-		border-color: #90939933;
-	}
-	#userAddModel3 .dialog-footer{
-		padding: 10px 20px 20px;
-		display: block;
-		margin:10px 0;
-		text-align: right;
-	}
+}
 </style>

@@ -67,7 +67,9 @@ export function getresource_organizations(data) {
 
 
 
-/* 列出监控平台（唐古拉）中指定组织机构（区域）的父级组织机构（区域）路径  */
+/* 列出监控平台（唐古拉）中指定组织机构（区域）的父级组织机构（区域）路径  不是全国的时候 拼取地址时
+ */
+
 export function  getresource_organization_paths (data) {
     return request({
         url: '/super/admin/api/v1/enterprise_management/list_parent_monitor_resource_organization_paths',
@@ -88,6 +90,74 @@ export function  getenterprise_all_functions (data) {
 }
 
 
+
+/* 列出企业可分配的所有功能权限  */
+export function  get_monitor_server (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/get_monitor_server',
+        method: 'post',
+        data: data
+    })
+}
+/* 注销企业 */
+export function  get_unregister_enterprise (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/unregister_enterprise',
+        method: 'post',
+        data: data
+    })
+}
+
+
+/* 给企业临时管理员账号延期 */
+export function  getpostpone_casual_admin (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/postpone_casual_admin',
+        method: 'post',
+        data: data
+    })
+}
+
+/* 查询企业临时管理员账号 */
+export function get_casual_admin_info (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/get_casual_admin_info',
+        method: 'post',
+        data: data
+    })
+}
+
+
+/* 查询企业信息*/
+export function getenterprise_info (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/get_enterprise_info',
+        method: 'post',
+        data: data
+    })
+}
+
+/* 
+编辑企业信息*/
+export function getmodify_enterprise (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/modify_enterprise',
+        method: 'post',
+        data: data
+    })
+}
+
+
+/* 
+
+获取终端通讯录子级单位*/
+export function get_terminal_departs (data) {
+    return request({
+        url: '/super/admin/api/v1/enterprise_management/get_terminal_departs',
+        method: 'post',
+        data: data
+    })
+}
 
 
 

@@ -54,10 +54,19 @@ export function Managementmodify_app_upgrade_info(data) {
 }
 
 /* Management 接口 */
-/* v  */
+/* v 设置应用升级信息是否启用 */
 export function Managementset_app_upgrade_info_enabled(data) {
     return request({
         url: '/super/admin/api/v1/app_upgrade_management/set_app_upgrade_info_enabled',
+        method: 'post',
+        data: data
+    })
+}
+/* Management 接口 */
+/* v 获取指定ID的应用升级信息 */
+export function Managementset_get_app_upgrade_info(data) {
+    return request({
+        url: '/super/admin/api/v1/app_upgrade_management/get_app_upgrade_info',
         method: 'post',
         data: data
     })
@@ -134,6 +143,90 @@ export function Upgraderelease_h5_upgrade_info(data) {
 export function Upgradeupload_h5_package(data) {
     return request({
         url: '/super/admin/api/v1/h5_upgrade_management/upload_h5_package',
+        method: 'post',
+        data: data
+    })
+}
+
+
+
+
+
+
+/* APP功能模块管理  接口 */
+/* 
+
+
+新增功能模块信息  */
+export function add_app_upgrade_info(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/add_app_fun_module_info',
+        method: 'post',
+        data: data
+    })
+}
+
+
+
+
+
+/* APP功能模块管理  接口 */
+/* 删除功能模块信息  */
+export function delete_app_fun_module_info(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/delete_app_fun_module_info',
+        method: 'post',
+        data: data
+    })
+}
+/* APP功能模块管理  接口 */
+/* 
+获取功能模块信息  */
+export function get_app_fun_module_info(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/get_app_fun_module_info',
+        method: 'post',
+        data: data
+    })
+}
+/* APP功能模块管理  接口 */
+/* 
+列出功能模块信息  */
+export function list_app_fun_module_infos(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/list_app_fun_module_infos',
+        method: 'post',
+        data: data
+    })
+}
+/* APP功能模块管理  接口 */
+/* 
+
+修改功能模块信息  */
+export function modify_app_fun_module_info(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/modify_app_fun_module_info',
+        method: 'post',
+        data: data
+    })
+}
+/* APP功能模块管理  接口 */
+/* 
+
+设置功能模块是否启用  */
+export function set_app_fun_module_info_enabled(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/set_app_fun_module_info_enabled',
+        method: 'post',
+        data: data
+    })
+}
+/* APP功能模块管理  接口 */
+/* 
+上传功能模块图标  */
+export function upload_fun_module_icon(data) {
+    return request({
+        url: '/super/admin/api/v1/app_fun_module_management/upload_fun_module_icon',
         method: 'post',
         data: data
     })

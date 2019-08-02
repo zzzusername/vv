@@ -315,9 +315,6 @@
 		}
     }
     /* 弹窗样式重置 */
-    .block, .formTable, .el-dialog__body{
-        overflow: hidden;
-    }
     .formTable{
         padding: 2px 4px;
         background: #4a567c;
@@ -332,7 +329,7 @@
     #userAddModel2 .el-form-item {
 		margin: 0;
 		padding: 0;
-		width: 91%;
+		width: 100%;
 		float: left;
     }
     .infoMsg{

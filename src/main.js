@@ -30,6 +30,9 @@ import myserver from './script/servers'
 // import meetingserver from './components/meeting/meetingserver'
 
 
+
+
+
 import store from './store'
 
 
@@ -54,9 +57,33 @@ Vue.use(msgserver)
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
 Vue.prototype.$http = axios;
-// Vue.prototype.msgserver=msgserver
+Vue.prototype.msgserver=msgserver
+
+router.beforeEach((to, from, next) => {
+  // console.log(to, from, next)
+  let token = localStorage.Accesstoken;
+  if (to.path=="/") { // 判断该路由是否需要登录权限
 
 
+      next();
+
+
+  }
+  else {
+    if (token === null||token ===undefined) {
+      // console.log('未登录');
+      next({
+        path: '/',
+        // query: {redirect: to.fullPath} // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }else {
+      next();
+    }
+
+
+  }
+
+})
 Vue.prototype.reLogin = function (res){
 	console.log("进入判断是否需要弹窗"+"window.IsTips="+window.IsTips);
 	// if(window.IsTips){
@@ -107,13 +134,13 @@ Vue.prototype.removing=function(idlist){
 Vue.prototype.postSwagger = function (url,par){
 
 	   let URL = ServerUrl;
-	this.$http.post(URL + url, par).then(function (res) {
+		this.$http.post(URL + url, par).then(function (res) {
 		console.log(res)
 		return  res
 
 
 		if (res.status === 200 && res.data.result == "ok") {
-
+			
 
 
 		}
@@ -148,7 +175,7 @@ Vue.prototype.timestampToTime  = function (res){
 // 统一注册
 Object.keys(filters).forEach(key => {
 	Vue.filter(key, filters[key])
-}) 
+})
 
 /* eslint-disable no-new */
 new Vue({
