@@ -129,7 +129,7 @@ textarea:-ms-input-placeholder {
 
   margin-left: 10px;
   line-height: 18px;
-  width: 200px;
+  width: 75%;
 }
 
 /* .verificationCode {
@@ -151,15 +151,22 @@ textarea:-ms-input-placeholder {
 }
 
 .code {
-  margin-left: 24px;
+  /* margin-left: 24px; */
   float: left;
-  width: 38%;
+  width: 50%;
   height: 35px;
   overflow: hidden;
   /*margin-right: 4.3%;*/
   background: #1c1e35;
 }
+.code img {
+ 
+  float: left;
+  width: 100%;
+  height: 35px;
+  overflow: hidden;
 
+}
 .J_codeimg {
   color: #f0f0f0;
   width: 100%;

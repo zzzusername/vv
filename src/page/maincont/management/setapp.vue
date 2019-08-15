@@ -36,7 +36,7 @@
                         <div class="logoName">
                             <img class="img" src="../../../assets/appIndelogin.jpg" alt="logn">
                             <span>{{indexName}}</span>
-                            <input type="text" placeholder="请输入登录名称" v-model="indexName">
+                            <input type="text" placeholder="请输入登录名称" v-model="indexName" maxlength="10">
                         </div>
                     </div>
                     <div class="setFooter">
@@ -153,6 +153,7 @@ import {
                 text: this.appEwm,   // 设置二维码内容或跳转地址
                 colorDark : "#000000", // 生成的二维码的深色部分
                 colorLight : "#ffffff", //生成二维码的浅色部分
+                correctLevel : QRCode.CorrectLevel.L   // 容错值
             })
 
         },
@@ -177,12 +178,13 @@ import {
         },
         // 下载二维码
         downloadEwm(){
-           let myCanvas = document.getElementById('qrcode').getElementsByTagName('canvas')
-            var a = document.createElement("a");
-            a.href = myCanvas[0].toDataURL('image/png').replace('image/png', 'image/octet-stream')
-            a.download = '企业二维码'
-            a.click();
-
+             var imgs = document.getElementById("qrcode").getElementsByTagName("img")
+                var a = document.createElement('a')
+                a.download = '企业二维码'
+                a.href = imgs[0].src
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
         },
         // 获取二维码url
         getInitAppname(){
@@ -337,7 +339,7 @@ import {
                 this.$message.error('请上传您的H5压缩包文件')
                 return false;
             }
-            if(objData.upgrade_instructions){
+            if(objData.upgrade_instructions == ''){
                 this.$message.error('请填写原因')
                 return false;
             }

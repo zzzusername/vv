@@ -145,3 +145,124 @@ export function settingsUpdateappName(data) {
         data: data
     })
 }
+// /admin/api/v1/app_one_click_alarm_type/add
+// 新增一键报警类别信息
+export function appOneclickAlarmtypeAdd(data) {
+    return request({
+        url: '/admin/api/v1/app_one_click_alarm_type/add',
+        method: 'post',
+        data: data
+    })
+}
+// 删除
+// /admin/api/v1/app_one_click_alarm_type/delete
+export function appOneclickAlarmtypeDelete(data) {
+    return request({
+        url: '/admin/api/v1/app_one_click_alarm_type/delete',
+        method: 'post',
+        data: data
+    })
+}
+// 修改
+//  /admin/api/v1/app_one_click_alarm_type/modify
+export function appOneclickAlarmtypeModify(data) {
+    return request({
+        url: '/admin/api/v1/app_one_click_alarm_type/modify',
+        method: 'post',
+        data: data
+    })
+}
+// /admin/api/v1/app_one_click_alarm_type/get
+export function appOneclickAlarmtypeGet(data) {
+    return request({
+        url: '/admin/api/v1/app_one_click_alarm_type/get',
+        method: 'post',
+        data: data
+    })
+}
+// /admin/api/v1/app_one_click_alarm_type/list
+export function appOneclickAlarmtypeList(data) {
+    return request({
+        url: '/admin/api/v1/app_one_click_alarm_type/list',
+        method: 'post',
+        data: data
+    })
+}
+
+/* app 模块管理 */
+
+// 新增
+// /admin/api/v1/app_management/app_fun_modules/add
+export function appFunmodulesAdd(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/add',
+        method: 'post',
+        data: data
+    })
+}
+
+// 删除
+export function appFunmodulesDelete(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/delete',
+        method: 'post',
+        data: data
+    })
+}
+// 获取详情
+export function appFunmodulesGet(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/get',
+        method: 'post',
+        data: data
+    })
+}
+// 列表
+export function appFunmodulesList(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/list',
+        method: 'post',
+        data: data
+    })
+}
+// 修改
+// /admin/api/v1/app_management/app_fun_modules/modify
+export function appFunmodulesModify(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/modify',
+        method: 'post',
+        data: data
+    })
+}
+// 移动
+export function appFunmodulesMove(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/move',
+        method: 'post',
+        data: data
+    })
+}
+// 获取图片上传参数
+export function getIconuploadProperties(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/get_icon_upload_properties',
+        method: 'post',
+        data: data
+    })
+}
+// 设置功能模块是否启用
+export function appFunmodulesSetenabled(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/set_enabled',
+        method: 'post',
+        data: data
+    })
+}
+// 上传图标
+export function appFunmodulesUploadicon(data) {
+    return request({
+        url: '/admin/api/v1/app_management/app_fun_modules/upload_icon',
+        method: 'post',
+        data: data
+    })
+}

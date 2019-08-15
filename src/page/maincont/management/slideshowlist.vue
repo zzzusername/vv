@@ -18,11 +18,22 @@
                                     <img class="tableImg" :src="scope.row.image_url" alt="" style="width:30px;height:30px;">
 								</template>
                             </el-table-column>
-							<el-table-column prop="state" label="状态">
+							<el-table-column prop="state" label="禁用／启用">
 								 <template slot-scope="scope">
-									 <div id="changeState">
+									 <!-- <div id="changeState">
 										<span class="spanBtn" v-if='scope.row.enabled' @click="stateCnageclidk(true,scope.row)">禁用</span>
 										<span class="spanBtn qiyong" v-else @click="stateCnageclidk(false,scope.row)">启用</span>
+									 </div> -->
+									 <div id="changeState">
+										<el-switch
+											v-model="scope.row.enabled"
+											active-color="#13ce66"
+											inactive-color="#d6cdcd"		
+											on-value="1"
+											off-value="0"
+											@change="changeSwitch(scope.row)"
+											>
+										</el-switch>
 									 </div>
 								</template> 
 							</el-table-column>
@@ -54,24 +65,26 @@
                 :before-close="cancelNewdata"
 				:close-on-click-modal='false'
                 width="40%">
-                <el-form  ref="edit" label-width="30%" class="demo-ruleForm">
+                <el-form  ref="edit" label-width="35%" class="demo-ruleForm">
                     <div class="formTable">
 						<div class="block">
-							<el-form-item label="顺序："  prop="passworld">
+							<el-form-item label="顺序："  prop="passworld" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.order" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block">
-							<el-form-item label="轮播图名称："  prop="resetpassworld">
+							<el-form-item label="轮播图名称："  prop="resetpassworld" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.name" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<!-- 头像上传 -->
 						<div class="block upLoad"  id="personal">
-							<el-form-item label="轮播图片：" prop="img"  id='personalFormitem'>
-							<span id="upImgspan">（700x1080像素，png，jpg格式）</span>
+							<el-form-item label="轮播图片：" prop="img"  id='personalFormitem' :rules="[{ required: true, message: ' '}]">
+							<span id="upImgspan">（1080x700像素，png，jpg格式）</span>
 								<div class="Inf-img">
-									<img :src='Initimgdata' alt="">
+									<div class="imgCont">
+										<img :src='Initimgdata' alt="">
+									</div>
 									<div class="upCont">
 										<input 
 											type="file" id="headPortrait" name="files" 
@@ -86,7 +99,7 @@
 							</el-form-item>
 						</div>
 						<div class="block">
-                            <el-form-item label="状态：" prop="name">
+                            <el-form-item label="状态：" prop="name" :rules="[{ required: true, message: ' '}]">
                                 <div class="checkboxBg">
                                     <el-radio v-model="addForm.state" label="1">启用</el-radio>
   									<el-radio v-model="addForm.state" label="0">禁用</el-radio>
@@ -177,9 +190,6 @@
 			heightAuto(row)
 			// 初始化数据
 			this.getInitlistData();
-
-
-			let str = '/opt/ucsys/upload/temp/051157e9-cd3d-4f43-940a-102ba5caedc6@332211.jpg'
 
 		},
 		methods:{
@@ -376,22 +386,28 @@
 					});          
 				});
 			},
-			// 状态切换
-			stateCnageclidk(type,scope){
+			changeSwitch(scope){
+				let type = scope.enabled
 				let objData = {
   					"id": scope.id
 				}
-				if(type){
+				if(!type){
 					// 禁用
 					objData.enabled = false;
 				}else{
 					// 启用
 					objData.enabled = true;
 				}
+				this.stateCnageclidk(type,objData);
+
+			},
+			// 状态切换
+			stateCnageclidk(type,obj){
+				let objData = obj;
 				// ajax bannersSetenabled
 				bannersSetenabled(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
-						if(!type){
+						if(type){
 							this.$message.success('启用成功');
 						}else{
 							this.$message.success('禁用成功');

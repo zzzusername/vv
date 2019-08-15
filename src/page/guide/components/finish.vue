@@ -5,52 +5,90 @@
         <span>App二维码</span>
       </div>
       <div class="bd">
-         <img :src="src" alt="" class="ewm">
-         <div>
-          <input type="text" v-model="logoName" class="contactsInput">
-         </div>
-         <div id="upload">
-           <!-- <el-upload
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              >
-              <el-button size="small" type="primary">
-                <span style='color:#fff;'>更换logo</span>
-              </el-button>
-              <div slot="tip" class="el-upload__tip">256x256像素，jpg、png格式</div>
-            </el-upload> -->
-         </div>
+        <div id="upload">
+          <div id="qrcode" ref="qrcode"></div>
+          <div>
+            <input disabled class="appLogoinp" type="text" value="掌上通APP安装二维码" />
+          </div>
+        </div>
       </div>
     </div>
     <div class="btnRight">
-      <button class="Zbtn btn-submit">下载二维码</button>
+      <button class="Zbtn btn-submit" @click="downloadEwm">下载二维码</button>
       <button class="Zbtn btn-submit" @click="finishClick">完成</button>
     </div>
   </div>
 </template>
 <script>
+import QRCode from '../../untils/qrcode'
+import {
+        getAppdownloadPageurl,
+
+        } from '../../api/appmanagement'
 export default {
   data() {
     return {
-      src : 'http://img1.imgtn.bdimg.com/it/u=2586870947,764155106&fm=26&gp=0.jpg',
-      logoName : '新疆掌上通',
-
+      // 二维码 地址
+      appEwm : '',
     };
   },
-  methods:{
-    finishClick(){
+  mounted: function() {
+    // 二维码  url
+    this.getInitermurl();
+  },
+  methods: {
+    // 二维码 函数
+    qrcode() {
+      let qrcode = new QRCode("qrcode", {
+        width: 200, // 设置宽度，单位像素
+        height: 200, // 设置高度，单位像素
+        border: 2,
+        text: this.appEwm, // 设置二维码内容或跳转地址
+        colorDark: "#000000", // 生成的二维码的深色部分
+        colorLight: "#ffffff", //生成二维码的浅色部分
+        correctLevel: QRCode.CorrectLevel.L // 容错值
+      });
+    },
+    // 获取二维码url
+    getInitermurl() {
+      // 二维码 生成调用
+      // getAppdownloadPageurl
+      let objData = {
+        enterprise_id: localStorage.EnterpriseId
+      };
+      getAppdownloadPageurl(objData).then(res => {
+        if (res.status === 200 && res.data.result == "ok") {
+          this.appEwm = res.data.data.app_download_page_url;
+
+          // 二维码 生成调用
+          this.$nextTick(() => {
+            this.qrcode();
+          });
+        }
+      });
+    },
+    // 下载二维码
+    downloadEwm() {
+      var imgs = document.getElementById("qrcode").getElementsByTagName("img");
+      var a = document.createElement("a");
+      a.download = "企业二维码";
+      a.href = imgs[0].src;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    },
+    // 完成
+    finishClick() {
       this.$router.push({
         path: "/Homemain/company",
-        query:{
-
-        }
-      })
+        query: {}
+      });
     }
   }
 };
 </script>
 <style scoped>
-.ewm{
+.ewm {
   margin-bottom: 20px;
   padding: 0;
   width: 200px;
@@ -66,7 +104,7 @@ export default {
   background: #2a3558;
   border: 1px #3b4872 solid;
 }
-.el-upload__tip{
+.el-upload__tip {
   margin: 0;
   margin-top: 10px;
   display: inline-block;
@@ -74,7 +112,16 @@ export default {
   color: #fff;
   line-height: 23px;
 }
-
+.appLogoinp{
+    margin-bottom: 20px;
+    width: 180px;
+    height: 36px;
+    font-size: 14px;
+    line-height: 36px;
+    padding-left: 20px;
+    background: #2a3558;
+    border: 1px solid #3b4872;
+}
 </style>
 
 

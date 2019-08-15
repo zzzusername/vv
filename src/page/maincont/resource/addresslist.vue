@@ -2,8 +2,8 @@
 	<div id="resoure" class="mRight">
 		<div class="resoureList">
 			<div class="zForm">
-				<span class="paddingLeft">查询方式：</span>
-				<div class="zSelect">
+			<!-- 	<span class="paddingLeft">查询方式：</span> -->
+				<div class="zSelect" style="display:none;">
 					<el-select v-model="queryValue" class="zgroup" placeholder="--请选择--">
 						<el-option v-for="item in queryData" 
 						:key="item.index"  :label="item.value" :value="item.index"></el-option>
@@ -97,7 +97,7 @@
 					}
 				],
 				// 查询方式 接口判断 参数
-				queryValue : '',
+				queryValue : '2',
 				keyName : '',
 				// 企业id
 				enterpriseId :  localStorage.EnterpriseId,
@@ -477,7 +477,7 @@
 				}
 				.zSelect {
 					float: left;
-					width: 148px;
+					width: 200px;
 				}
 				.paddingLeft {
 					padding-left: 20px;

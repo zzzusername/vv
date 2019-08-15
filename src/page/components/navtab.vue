@@ -177,7 +177,7 @@ export default {
                   actionIdList: [],
                   children: []
                 },
-               /*  {
+                {
                   id: 43,
                   parentId: 3,
                   index: "4-3",
@@ -187,7 +187,7 @@ export default {
                   actionIdList: [],
                   children: []
                 },
-                {
+            /*  {
                   id: 44,
                   parentId: 4,
                   index: "4-4",
@@ -197,7 +197,7 @@ export default {
                   actionIdList: [],
                   children: []
                 }, */
-               /*  {
+                {
                   id: 45,
                   parentId: 5,
                   index: "4-5",
@@ -206,7 +206,17 @@ export default {
                   description: "",
                   actionIdList: [],
                   children: []
-                }, */
+                },
+                {
+                  id: 46,
+                  parentId: 6,
+                  index: "4-6",
+                  title: "视频分享圈",
+                  url: "/Homemain/videoSharingcircle",
+                  description: "",
+                  actionIdList: [],
+                  children: []
+                },
               ]
             },
            /*  {

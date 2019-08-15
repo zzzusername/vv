@@ -141,3 +141,48 @@ export function modifyPersonalinfo(data) {
     data: data
   })
 }
+
+// 获取 短信验证码
+//  /common/api/v1/auth/send_sms_verification_code_for_reset_password
+export function sendSmsverificationCodeforResetpassword(data) {
+  return request({
+    url: '/common/api/v1/auth/send_sms_verification_code_for_reset_password',
+    method: 'post',
+    data: data
+  })
+}
+// 重置密码
+// /common/api/v1/auth/reset_password
+export function resetPassword(data) {
+  return request({
+    url: '/common/api/v1/auth/reset_password',
+    method: 'post',
+    data: data
+  })
+}
+// 找回密码 获取验证码
+// /common/api/v1/auth/get_reset_password_captcha
+export function getResetpasswordCaptcha(data) {
+  return request({
+    url: '/common/api/v1/auth/get_reset_password_captcha',
+    method: 'post',
+    data: data
+  })
+}
+// 发送验证码 需要图片验证码
+// /common/api/v1/auth/send_sms_verification_code
+export function sendSmsverificationCode(data) {
+  return request({
+    url: '/common/api/v1/auth/send_sms_verification_code',
+    method: 'post',
+    data: data
+  })
+}
+// /common/api/v1/auth/check_sms_verification_code
+export function checkSmsverificationCode(data) {
+  return request({
+    url: '/common/api/v1/auth/check_sms_verification_code',
+    method: 'post',
+    data: data
+  })
+}

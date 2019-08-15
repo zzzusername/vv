@@ -51,6 +51,7 @@
 		<el-dialog  title="临时账号" 
 			:visible.sync="shortTimepop"
 			id="zDialogtext"
+			:close-on-click-modal='false'
 		 	width="30%"
 			 >
 			<div class="block">

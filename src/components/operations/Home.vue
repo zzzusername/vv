@@ -134,6 +134,12 @@
                 <el-input v-model="addenterprise.contacts_phonenums" maxlength="120"></el-input>
               </el-form-item>
             </div>
+              <div class="block blockUrl">
+              <el-form-item label="终端分布图地址"  prop="url">
+                <el-input v-model="addenterprise.terminal_distribution_map_url" maxlength="120"  placeholder="如：http://10.1.24.33:3000/index?user={username}&pwd={password}&area_code={areaCode}&area_name={areaName}&xzjb={xzjb}&access_token=33333333333333333333333333333333"></el-input>
+             
+              </el-form-item>
+            </div>
             <div class="power" @click="closedButton=false">
 
                 <el-tabs v-model="activeName" @tab-click="tabClick">
@@ -335,6 +341,12 @@
             <div class="block">
               <el-form-item label="联系人手机号：" :rules="[{ required: true, message: ' '}]" prop="url">
                 <el-input v-model="editlist.contacts_phonenums" maxlength="120"></el-input>
+              </el-form-item>
+            </div>
+            <div class="block blockUrl">
+              <el-form-item label="终端分布图地址" prop="url">
+                <el-input v-model="editlist.terminal_distribution_map_url" maxlength="120"  placeholder="如：http://10.1.24.33:3000/index?user={username}&pwd={password}&area_code={areaCode}&area_name={areaName}&xzjb={xzjb}&access_token=33333333333333333333333333333333"></el-input>
+             
               </el-form-item>
             </div>
             <div class="power" @click="closedButtonedit=false">
@@ -601,6 +613,7 @@
           "region_full_code": "",
           "region_full_name": "",
           "region_name": "",
+          "terminal_distribution_map_url":"",
           "terminal_regions": []
         },
 
@@ -662,6 +675,7 @@
           "region_full_code": "",
           "region_full_name": "",
           "region_name": "",
+          "terminal_distribution_map_url":"",
           "terminal_regions": []
         },
         options: [],
@@ -1278,7 +1292,8 @@
 
       //流媒体服务器获取树结构
       gettree() {
-//        console.log("getRegionsbyPid取树结构")
+       console.log("getRegionsbyPid取树结构")
+       console.log(this.Fid)
         treedata = []
         let _this = this;
         let URL = ServerUrl;
@@ -1287,8 +1302,32 @@
           "pid": this.Fid,
           "timestamp": 0
         }
+          var par = {
+          "org_code": this.Fid,
+        }
+        // 是不是全国
+  // getallenterprise_streamservers(par).then(function (res) {
 
 
+  //         if (res.status === 200 && res.data.result == "ok") {
+
+  //           let response = res.data.data;
+
+  //           var loglist = response
+  //           for (var y = 0; y < loglist.length; y++) {
+  //             loglist[y].name = loglist[y].server_name
+
+  //           }
+  //           console.log(loglist)
+
+
+  //         }
+     
+  //       }).catch(function (error) {
+  //         console.log(error);
+  //       });
+
+     
         getRegionsbyPid(listpar).then(function (res) {
 //          console.log(res)
 
@@ -1307,6 +1346,7 @@
 
               });
             }
+               console.log(list)
             _this.data = list;
 
           }
@@ -2099,6 +2139,7 @@
               region_full_code: res.data.data.region_full_code,
               region_full_name: res.data.data.region_full_name,
               region_name: res.data.data.region_name,
+              terminal_distribution_map_url: res.data.data.terminal_distribution_map_url,
               terminal_regions: res.data.data.terminal_regions
             },
 //              console.log("我需要的数据");
@@ -2222,9 +2263,9 @@
             type: 'warning'
           });
           flag = false;
-        }else if(this.addenterprise.contacts_phonenums!= ''){
+        }else if(this.editlist.contacts_phonenums!= ''){
           var reg = new RegExp(window.phone);
-          var r = reg.test(this.addenterprise.contacts_phonenums);
+          var r = reg.test(this.editlist.contacts_phonenums);
           if (r != true) {
             this.$message({
               message: "手机不符合要求",
@@ -2891,6 +2932,11 @@
 //                console.log("第4层")
               var datalist = []
             }
+          //    datalist.forEach(function (value, i) {
+
+          //  datalist[i].class="is-indeterminate"
+
+          //     })
             
             resolve(datalist);
 
@@ -3751,7 +3797,12 @@
     overflow: hidden;
     /* border:2px #4a567c solid; */
   }
-
+  .blockUrl{
+      width: 105% ;
+  }
+.blockUrl label{
+   width: 15% !important;
+}
   .block-row {
     float: left;
     width: 105%;
@@ -3988,6 +4039,17 @@
     border: 1px #3b4872 solid;
   }
 
+  #menuAddModel .blockUrl .el-form-item__label,
+  #enterpriseEditModel .blockUrl .el-form-item__label
+  /* #enterpriseEditModel .blockUrl .el-input__inner, */
+  {
+      width: 14% !important;
+    height: 36px;
+    margin: 2px 0;
+    line-height: 36px;
+    border: 1px #3b4872 solid;
+  }
+
   #menucasualModel .el-dialog__body,
   #enterpriseEditModel .el-dialog__body,
   #menuAddModel .el-dialog__body {
@@ -4057,6 +4119,11 @@
   /*background-color: #1b274c;*/
   /*}*/
 
+  #menuAddModel .blockUrl .el-form-item__content,
+  #enterpriseEditModel .blockUrl .el-form-item__content {
+      margin-left: 14% !important;
+    line-height: 32px;
+  }
   #menucasualModel .block .el-form-item__content,
   #menuAddModel .block .el-form-item__content,
   #enterpriseEditModel .block .el-form-item__content {

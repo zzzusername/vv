@@ -49,12 +49,12 @@
 								</el-select>
 							</div>
 							<div class="block">
-								<el-form-item label="单位名称："  prop="">
+								<el-form-item label="单位名称：" :rules="[{ required: true, message: ' '}]"  prop="">
 									<el-input v-model="workUnitdata.name" maxlength="50"></el-input>
 								</el-form-item>
 							</div>
 							<div id="areaSelectpopover" v-show="this.WorkunitTypevalue == '1'">
-								<el-form-item label="地区："  prop="">
+								<el-form-item label="地区：" :rules="[{ required: true, message: ' '}]"  prop="">
 									<el-input 
 										v-model="workUnitdata.region_full_name" 
 										maxlength="50"

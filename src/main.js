@@ -3,20 +3,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import echarts from 'echarts'
 import ElementUI from 'element-ui'
 import msgserver from './components/message/msgservers/msgservers'
 import $ from 'jquery'
-import videojs from 'video.js'
-import 'videojs-contrib-hls'
-
-import 'video.js/dist/video-js.css'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import vuescroll from 'vuescroll'
-
-import 'videojs-contrib-hls'
 import myserver from './script/servers'
 // import treemenu from './script/jquerytreemenu'
 // import iptvserver from './components/liveRadio/IPTVserver'
@@ -55,21 +48,19 @@ Vue.use(msgserver)
 // Vue.use(meetingserver)
 
 Vue.config.productionTip = false
-Vue.prototype.$echarts = echarts
 Vue.prototype.$http = axios;
 Vue.prototype.msgserver=msgserver
 
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   // console.log(to, from, next)
   let token = localStorage.Accesstoken;
-  if (to.path=="/") { // 判断该路由是否需要登录权限
+  if (to.path == "/" || to.path == "/Forgetpassword" || to.path == "/Homeapp" ) { // 判断该路由是否需要登录权限
 
 
       next();
 
 
-  }
-  else {
+  }else {
     if (token === null||token ===undefined) {
       // console.log('未登录');
       next({
@@ -79,11 +70,9 @@ router.beforeEach((to, from, next) => {
     }else {
       next();
     }
-
-
   }
 
-})
+}) */
 Vue.prototype.reLogin = function (res){
 	console.log("进入判断是否需要弹窗"+"window.IsTips="+window.IsTips);
 	// if(window.IsTips){

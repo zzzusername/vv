@@ -105,6 +105,7 @@ export function get_sync_terminal_dev_data(data) {
     return request({
         url: '/super/admin/api/v1/resources_management/assist_server/sync_terminal_dev_data',
         method: 'post',
-        data: data
+        data: data,
+        timeout: 3600000, //通过timeout属性，设置超时时间
     })
 }

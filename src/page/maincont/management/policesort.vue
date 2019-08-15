@@ -2,6 +2,7 @@
 	<div id="policesort" class="mRight">
 		<div class="policesortList">
 			<div class="zForm">
+                <button class="buttonradius" style="float:right;" @click="addPolicesortlData(true)">新增</button>
 			</div>
 			<!-- table  -->
 			<div class="zTable">
@@ -10,17 +11,19 @@
 						<el-table
 						:data="policesortData"
 						>
-							<el-table-column prop="name" label="模块名称"></el-table-column>
+							<el-table-column prop="sort" label="序号"></el-table-column>
+							<el-table-column prop="type_name" label="报警类别"></el-table-column>
+							<el-table-column prop="id" label="报警类别ID"></el-table-column>
 							<el-table-column prop="" label="操作" >
 								<template slot-scope="scope">
-									<span class="spanBtn">编辑</span>
-									<span class="spanBtn">删除</span>
+									<!-- <span class="spanBtn" @click="addPolicesortlData(false,scope.row)">编辑</span> -->
+									<span class="spanBtn" @click="deletListdata(scope.row)">删除</span>
 								</template>
 							</el-table-column>
 						</el-table>
 					</div>
                   	<!-- page -->
-					<el-pagination
+					<!-- <el-pagination
 						@current-change="handleCurrentChange" 
 						:current-page.sync="page_total_pages" 
 						:page-size="page_size" 
@@ -28,10 +31,34 @@
 						:total="page_total_items"
 						class="zPage"
 						>
-					</el-pagination>
+					</el-pagination> -->
 				</div>
 			</div>
 		</div>
+		<!-- 新增-->
+        <div id="commonPop">
+            <el-dialog  :title='popTitle' 
+                :visible.sync="addDatapop"
+                :before-close="cancelNewdata"
+				:close-on-click-modal='false'
+                width="40%">
+                <el-form  ref="edit" label-width="20%" class="demo-ruleForm">
+                    <div class="formTable">
+						<div class="block">
+							<el-form-item label="报警类型："  prop="passworld" :rules="[{ required: true, message: ' '}]">
+								<el-input v-model="addForm.type_name" maxlength="4"></el-input>
+							</el-form-item>
+                        </div>
+                    </div>
+                    <div class="userBtn">
+                        <el-form-item>
+                            <el-button type="primary" @click="saveNewdata">保存</el-button>
+                            <el-button @click="cancelNewdata()">取消</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+            </el-dialog>
+        </div>
 	</div>
 </template>
 <script>
@@ -42,22 +69,33 @@
 	// js
 	import {heightAuto} from '../../untils/heightAuto' //注意路径
 	/* api */
-	// getBannerlist 获取列表
-	import {getBannerlist} from '../../api/appmanagement';
+	// appOneclickAlarmtypeAdd 新增
+	// appOneclickAlarmtypeDelete 删除
+	// appOneclickAlarmtypeModify 修改
+	// appOneclickAlarmtypeGet  获取一键报警类别信息
+	// appOneclickAlarmtypeList  列表
+	import {appOneclickAlarmtypeAdd,
+			appOneclickAlarmtypeDelete,
+			appOneclickAlarmtypeModify,
+			appOneclickAlarmtypeGet,
+			appOneclickAlarmtypeList,
+			} from '../../api/appmanagement';
 
 	export default {
         data() {
 			return {
-				policesortData : [
-					{
-						name : '刑事案件',
-                    },
-                    {
-						name : '治安管理',
-					},
-                ],
+				addDatapop : false,
+				popTitle : '编辑内容',
+				policesortData : [],
+				addForm : {
+					type_name : '',
+				},
+				// 保存按钮状态   新增
+				saveBtntype : true,
+				// 编辑缓存数据
+				editDatacache : {},
 				/* 分页相关 */
-				page_size : 10,			//  请求多少条目
+				page_size : 5,			//  请求多少条目
 				page_total_items : 10,  // 总条数
 				page_total_pages : 1,  //  当前条数
 			}
@@ -75,17 +113,121 @@
 				let objData = {
 					"enterprise_id":  localStorage.EnterpriseId,
 					"page_number": this.page_total_pages - 1,
-  					"page_size": 10
+  					"page_size": 5
 					
 				}
-				getBannerlist(objData).then(res => {
+				appOneclickAlarmtypeList(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
-						console.log(res);
+						this.policesortData = res.data.data.list;
+						// 序号
+						this.policesortData.map(function(item,index){
+							item.sort = index - 0 + 1;
+						})
 						/* 总条数 */
 						this.page_total_items = res.data.data.page_total_items; 
 						this.page_total_pages = res.data.data.page_number - 0 + 1;
+					}else{
+						this.$message.error(res.data.error_description);
 					}
 				});	
+			},
+			// 新增
+			addPolicesortlData(type,scope){
+				if(type){
+					this.saveBtntype = true;
+					// 如果 大于 5 返回
+					let len = this.policesortData.length - 0 + 1;
+					if(len > 5){
+						this.$message.error('最多5个报警类型，请先删除已有报警类型再添加');
+						return false;
+					}
+					this.addDatapop = true;
+				}else{
+					// 编辑
+					this.saveBtntype = false;
+					this.editDatacache = scope;
+					// 赋值
+					this.addForm.type_name = scope.type_name
+					this.addDatapop = true;
+				}
+				
+			},
+			//保存
+			saveNewdata(){
+				// 新增   appOneclickAlarmtypeAdd
+				if(this.saveBtntype){
+					let objData = {
+						"enterprise_id": localStorage.EnterpriseId,
+						"type_name": this.addForm.type_name
+					}
+					if(this.addForm.type_name == ''){
+						this.$message.error('请输入报警类型')
+						return false;
+					}
+					appOneclickAlarmtypeAdd(objData).then(res => {
+						if (res.status === 200 && res.data.result == "ok") {
+							this.$message.success('新增成功');
+							this.getInitlistData();
+							this.addForm.type_name = '';
+							this.addDatapop = false;
+						}else{
+							this.$message.error(res.data.error_description);
+						}
+					});	
+				}else{
+					let objData = {
+						"id": this.editDatacache.id,
+						"type_name": this.addForm.type_name
+					}
+					appOneclickAlarmtypeModify(objData).then(res => {
+						if (res.status === 200 && res.data.result == "ok") {
+							this.$message.success('编辑成功');
+							this.getInitlistData();
+							this.addForm.type_name = '';
+							this.editDatacache = {};
+							this.addDatapop = false;
+						}else{
+							this.$message.error(res.data.error_description);
+						}
+					});	
+				}
+				
+
+			},
+			// 删除 
+			deletListdata(scope){
+				let objData = {
+					"id": scope.id
+				}
+				this.$confirm('是否删除?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',	
+						type: 'warning'
+				}).then(() => {	
+					// deletListdata
+					appOneclickAlarmtypeDelete(objData).then(res => {
+						if (res.status === 200 && res.data.result == "ok") {
+							this.$message.success('删除成功');
+							// 刷新数据
+							this.getInitlistData();
+						}else{
+							this.$message.error(res.data.error_description);
+						}
+					});	
+
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});          
+				});
+			
+
+			},
+			// 取消
+			cancelNewdata(){
+				this.addDatapop = false;
+				this.addForm.type_name = '';
 			},
 			// page
 			handleCurrentChange(currentPage) {
@@ -93,12 +235,6 @@
 				this.getInitallUserdata();
 			},
         },
-        updated() {
-			/* var addmodHei = $("#userAddModel2 .el-dialog").height();
-			$("#userAddModel2 .el-dialog").css("marginTop", -(addmodHei / 2));
-			$("#userAddModel2 .el-dialog").css("marginBottom", 0);
-			$("#distributionModel2 .el-dialog").css("marginTop", "-297px"); */
-		}
 	}
 	
 </script>
@@ -327,49 +463,5 @@
 				}
 			}
 		}
-    }
-    /* 弹窗样式重置 */
-    .formTable{
-        padding: 2px 4px;
-        background: #4a567c;
-        margin-bottom: 20px;
-    }
-    .block .el-form-item__label{
-        height: 36px;
-        margin: 2px 0;
-        line-height: 36px;
-        border: 1px solid #3b4872;
-    }
-    #userAddModel2 .el-form-item {
-		margin: 0;
-		padding: 0;
-		width: 91%;
-		float: left;
-    }
-    .infoMsg{
-        padding-left: 9px;
-        display: inline-block;
-        margin-top: 10px;
-    }
-    .checkboxBg{
-        width: 96%;
-        height: 34px;
-        margin: 2px 0;
-        line-height: 34px;
-        padding-left: 12px;
-        background: #2a3558;
-        border: 1px solid #3b4872;
-        text-align: left;
-    }
-    .el-dialog .textarea .el-form-item__label{
-        height: 160px;
-    }
-    .textarea{
-        clear: both;   
-        width: 100%;
-        height: 70px;
-        background: #4a567c;
-        font-size: 14px;
-        padding: 10px;
     }
 </style>

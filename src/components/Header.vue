@@ -1,6 +1,7 @@
 <template>
   <div class="head">
-    <div class="user">
+	<div class="forgotLogin" v-if='!isForgetpas' @click="returnLogin">登录</div>
+    <div v-if='isForgetpas' class="user">
 		<div class="userImg"></div>
 		<span>
 			<a href="javascript:;" v-html="Usemessage"></a>
@@ -15,7 +16,7 @@
 				<span @click="isshowinstall = true">
 					<el-dropdown-item>修改密码</el-dropdown-item>
 				</span>
-				<!-- <span @click="showPersonalinformation" v-if="isInformation = '1'">
+			<!-- 	<span @click="showPersonalinformation" v-if="isInformation = '1'">
 					<el-dropdown-item>个人信息</el-dropdown-item>
 				</span> -->
 			</el-dropdown-menu>
@@ -98,7 +99,9 @@
 					<div class="block upLoad">
 						<el-form-item label="头像" prop="img">
 							<div class="Inf-img">
-								<img :src='Initimgdata' alt="">
+								<div class="imgCont">
+									<img :src='Initimgdata' alt="">
+								</div>
 								<div class="upCont">
 									<input
 									type="file" id="headPortrait" name="files"
@@ -237,7 +240,7 @@ export default {
 		information : {
 			realname : '',
 			phonenum : '',
-			sex : '',
+			sex : 'BOY',
 			region_full_name : '所有地区参数',
 			region_full_code : '地区',
 			region_code : '地区',
@@ -296,6 +299,10 @@ export default {
 	isInformation : {
 		type : String,
 		default : '2'
+	},
+	isForgetpas : {
+		type : Boolean,
+		default : true,
 	}
   },
     destroyed: function() {
@@ -308,12 +315,11 @@ export default {
 			let _this = this;
 			let URL = ServerUrl;
 			if (this.parameter.Password1 == this.parameter.Password2) {
-				console.log("一样");
 				var reviseparameter = {
-				is_encrypted_password: false,
-				new_password: this.parameter.Password1,
-				phonenum: this.parameter.phone,
-				sms_verification_code: this.parameter.code
+					is_encrypted_password: false,
+					new_password: this.parameter.Password1,
+					phonenum: this.parameter.phone,
+					sms_verification_code: this.parameter.code
 				};
 
 				this.$http
@@ -441,8 +447,10 @@ export default {
 					// 初始化数据
 					//this.information = res.data.data
 					// realname name
-					this.information.realname  = res.data.data.realname;
-					this.information.sex  = res.data.data.sex;
+					this.information.realname  = res.data.data.realname ? res.data.data.realname  : '';
+					this.information.phonenum  = res.data.data.phonenum ? res.data.data.phonenum : '';
+					// 默认问 BOY
+					this.information.sex  = res.data.data.sex ? res.data.data.sex : 'BOY';
 					// 初始化职称 id 可能为空
 					this.enterpriseJobvalue = res.data.data.enterprise_job_title ?  res.data.data.enterprise_job_title.id : '';
 
@@ -648,6 +656,13 @@ export default {
 			this.enterpriseJobvalue = '';
 			this.isDepartdata = false;
 			this.isShowregionFulldata = false;
+		},
+		// 返回
+		returnLogin(){
+			console.log('登录')
+			this.$router.push({
+				path: "/"
+			});
 		}
 	},
 	mounted() {
@@ -656,6 +671,11 @@ export default {
 };
 </script>
 <style scoped>
+.forgotLogin{
+	float: right;
+	margin-right: 40px;
+	cursor: pointer;
+}
 #installlog .el-dialog {
   margin: 0 !important;
 }

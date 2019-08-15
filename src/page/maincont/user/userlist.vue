@@ -43,7 +43,11 @@
 							<el-table-column prop="fixedSort" label="序号"></el-table-column>
 							<el-table-column prop="realname" label="用户姓名"></el-table-column>
 							<el-table-column prop="phonenum" label="手机号"></el-table-column>
-							<el-table-column prop="name" label="头像"></el-table-column>
+							<el-table-column prop="" label="头像">
+								<template slot-scope="scope">
+									<img :src="imageProcessing(scope.row)" alt="" style="width:30px;height:30px;">
+								</template>
+							</el-table-column>
 							<el-table-column prop="" label="性别">
 								<template slot-scope="scope">
 									<span v-if="scope.row.sex == 'GIRL'">女</span>
@@ -197,22 +201,22 @@
                 <el-form  ref="edit" label-width="30%" class="demo-ruleForm">
                     <div class="formTable">
 						<div class="block block-line">
-							<el-form-item label="姓名："  prop="name">
+							<el-form-item label="姓名："  prop="name" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.realname" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block block-line">
-							<el-form-item label="手机号："  prop="phone">
+							<el-form-item label="手机号："  prop="phone" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.phonenum" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block block-line">
-							<el-form-item label="密码："  prop="passworld">
+							<el-form-item label="密码："  prop="passworld" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.password" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block block-line">
-							<el-form-item label="确认密码："  prop="resetpassworld">
+							<el-form-item label="确认密码："  prop="resetpassworld" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.affirmPassword" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
@@ -220,7 +224,9 @@
 						<div class="block upLoad"  id="personal">
 							<el-form-item label="头像：" prop="img" label-width="15%" id='personalFormitem'>
 								<div class="Inf-img">
-									<img :src='Initimgdata' alt="">
+									<div class="imgCont">
+										<img :src='Initimgdata' alt="">
+									</div>
 									<div class="upCont">
 										<input 
 										type="file" id="headPortrait" name="files" 
@@ -236,7 +242,7 @@
 							</el-form-item>
 						</div>
 						<div class="block block-line">
-                            <el-form-item label="性别：" prop="name">
+                            <el-form-item label="性别：" prop="name" :rules="[{ required: true, message: ' '}]">
                                 <div class="checkboxBg">
                                     <el-radio v-model="addForm.sex" label="BOY">男</el-radio>
   									<el-radio v-model="addForm.sex" label="GIRL">女</el-radio>
@@ -244,7 +250,7 @@
                             </el-form-item>
                         </div>
 						<div class="block block-line">
-                            <el-form-item label="管理员：" prop="name">
+                            <el-form-item label="管理员：" prop="name" :rules="[{ required: true, message: ' '}]">
                                 <div class="checkboxBg">
                                     <el-radio v-model="addForm.is_admin" label="true">是</el-radio>
   									<el-radio v-model="addForm.is_admin" label="false">否</el-radio>
@@ -252,7 +258,7 @@
                             </el-form-item>
                         </div>
 						<div class="block" id="areaSelectpopover">
-							<el-form-item label="地区：" prop="region_full_name" label-width="15%">
+							<el-form-item label="地区：" prop="region_full_name" label-width="15%" :rules="[{ required: true, message: ' '}]">
 								<el-input 
 								v-model="information.region_full_name" 	
 								maxlength="50"
@@ -282,7 +288,7 @@
 								</el-select>
 								@current-change="synchronouRegionsdata" 
 							</el-form-item> -->
-							<el-form-item label="工作单位：" prop="region_full_name" label-width="15%">
+							<el-form-item label="工作单位：" prop="region_full_name" label-width="15%" :rules="[{ required: true, message: ' '}]">
 								<el-input 
 								v-model="enterPrisepartsRenddata" 	
 								maxlength="50"
@@ -306,7 +312,7 @@
 							</el-form-item>
                         </div>
 						<div class="block">
-                            <el-form-item label="职务：" prop="name" label-width="15%">
+                            <el-form-item label="职务：" prop="name" label-width="15%" :rules="[{ required: true, message: ' '}]">
                                 <el-select v-model="addForm.job_title_id" class="zgroup" placeholder="--请选择--">
 									<el-option v-for="item in enterpriseJobtitles" 
 									:key="item.index" :label="item.name" :value="item.id"></el-option>
@@ -314,7 +320,7 @@
                             </el-form-item>
                         </div>
                         <div class="block">
-                            <el-form-item label="权限分组：" prop="name" label-width="15%">
+                            <el-form-item label="权限分组：" prop="name" label-width="15%" :rules="[{ required: true, message: ' '}]">
                                 <el-select v-model="prisegRoupsvalue"  placeholder="--请选择--">
                                     <el-option v-for="item in prisegRoupsdata" 
 									:key="item.index" :label="item.name" :value="item.id"></el-option>
@@ -322,7 +328,7 @@
                             </el-form-item>
                         </div>
 						<div class="textarea" id='reason'>
-							<el-form-item label="添加原因：" label-width="15%">
+							<el-form-item label="添加原因：" label-width="15%" :rules="[{ required: true, message: ' '}]">
 								<el-input style="width:720px;" type="textarea" v-model="addForm.add_reason" resize="none" maxlength="300"></el-input>
 							</el-form-item>
 						</div>
@@ -443,6 +449,9 @@
 	export default {
         data() {
 			return {
+				imgApi : window.ServerUrl,
+				// table渲染图片
+				enterprise_user_image : {},
 				// 表格渲染数据
 				userTabledata:[],
 				//  企业用户名称或手机号码
@@ -566,6 +575,7 @@
 				getEnterpriseuserManagementlist(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
 						this.userTabledata = res.data.data.list
+						this.enterprise_user_image = res.data.data.list.enterprise_user_image
 						this.userTabledata.map(function(item,index){
 							// fixedSort
 							item.fixedSort = index - 0 + 1;
@@ -705,7 +715,6 @@
 				let objData = {
 					"add_reason": this.addForm.add_reason,
 					"avatar_file_temp_path":this.avatarFiletempPath,
-					"checker_id":  localStorage.userId,
 					// 部门 id
 					"depart_id":  this.enterPrisepartsvalue,
 					"enterprise_id": localStorage.EnterpriseId,
@@ -968,6 +977,22 @@
 			// 地区下拉关闭按钮
 			closeShowregionFulldata(){
 				this.isShowregionFulldata = false;
+			},
+			// table 图片处理
+			imageProcessing(scope){
+				//let img = scope.image_small_path
+				let imgUrl = '';
+				if(scope.enterprise_user_image){
+					// 转移处理
+					let str = '/upload';
+					let obj = scope.enterprise_user_image.image_small_path;
+					let url = getCaption(obj,str)
+					imgUrl = window.ServerUrl + '/' + url;
+				
+				}else{
+					imgUrl = ''
+				}
+				return imgUrl;
 			},
 			// page
 			handleCurrentChange(currentPage) {

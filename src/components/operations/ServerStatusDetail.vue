@@ -343,6 +343,13 @@
     methods: {
 
       openFullScreen() {
+
+ this.$confirm('同步时间较长大约需要一小时，是否继续?', '消息', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          
         this.fullscreenLoading = true;
 
         var _this =this ;
@@ -364,6 +371,7 @@
 
           }
           if (res.data.result == "error") {
+              //  _this.fullscreenLoading = false;
             _this.fullscreenLoading = false;
             _this.$message(
              "同步失败",
@@ -373,8 +381,27 @@
 
 
         }).catch(function (error) {
+             this.fullscreenLoading = false;
           console.log(error);
         });
+
+  
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+
+
+
+
+
+
+
+
 
 
       },

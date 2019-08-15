@@ -44,18 +44,19 @@
 			<el-dialog  :title="Titpop" 
 				:visible.sync="editVisible"
 				:before-close="cancelClick"
+				:close-on-click-modal='false'
 				width="40%"
 				id="commonPop"
 				>
 				<el-form ref="edit" label-width="20%" class="demo-ruleForm">
 					<div class="formTable">
 						<div class="block">
-							<el-form-item label="职位名称："  prop="">
+							<el-form-item label="职位名称："  prop="" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="editName" maxlength="50"></el-input>
 							</el-form-item>
 						</div>
 						<div class="block">
-							<el-form-item label="备注信息："  prop="">
+							<el-form-item label="备注信息："  prop="" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="editComments" maxlength="50"></el-input>
 							</el-form-item>
 						</div>

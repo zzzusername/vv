@@ -469,7 +469,6 @@
         margin-top: 10px;
     }
     .checkboxBg{
-        width: 96%;
         height: 34px;
         margin: 2px 0;
         line-height: 34px;

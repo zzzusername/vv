@@ -123,7 +123,7 @@
 					<el-form ref="perForm" :model="perForm" label-width="140px">
 						<div class="formTable" style="margin: 0px;">
 							<div class="block">
-								<el-form-item label="新增权限组名称："  prop="name">
+								<el-form-item label="新增权限组名称："  prop="name" :rules="[{ required: true, message: ' '}]">
 									<el-input v-model="perForm.name" maxlength="15"></el-input>
 								</el-form-item>
 							</div>
@@ -131,7 +131,7 @@
 						<div id="tabChagecont">
 							<!-- 监控 ／ 终端 tab切换-->
 							<el-tabs v-model="activeName" type="border-card" style="padding:0 10px;">
-								<el-tab-pane label="权限分配：" name="first"  class="tabSelectpane">
+								<el-tab-pane label="功能分配：" name="first"  class="tabSelectpane">
 									<el-checkbox-group v-model="permissionsListvalue">
 										<el-checkbox 
 										v-for="item in permissionsList" :key="item.index"
@@ -201,8 +201,9 @@
 	</div>
 </template>
 <script>
+	import $ from 'jquery'
 	// js
-	import {heightAuto} from '../../untils/heightAuto' //注意路径
+	import {heightAuto,arrayObjdeweighting} from '../../untils/heightAuto' //注意路径
 	/* api */
 	// enterpriseUsermanagementGrouplist 列出满足条件的企业权限组信息
 	// listEnterpriseusers   列出当前企业下的用户
@@ -278,6 +279,8 @@
 				terminal_regions : [],
 				// tab 终端 默认勾选 通过 key 设置
 				terminalDefaultchecked : [],	
+				// copy 数据
+				terminalDefaultcheckedCopy   : [],
 				props: {
 					label: 'name',
 					children: 'children',
@@ -349,6 +352,17 @@
 						})
 
 						this.monitor_resource_organizations = sortingArray;
+
+						// 默认勾选 监控
+						if(this.monitorDefaultchecked.length != 0){
+							// 处理数据 取 unique_code 为数组 纯数组 
+							let disArray = this.monitorDefaultchecked;
+							let setCheckedkeyArray = []
+							for(let i = 0; i < disArray.length; i++){
+								setCheckedkeyArray.push(disArray[i].unique_code);
+							}
+							this.$refs.monitorTree.setCheckedKeys(setCheckedkeyArray)
+						}
 
 					}else{
 						// 错误提示信息
@@ -446,7 +460,7 @@
 				
 				
 			},
-			// 初始化  终端 根节点
+			// 终端  初始化 根节点 数据
 			getTerminalrootNodedirectory(){
 				listRootterminalRegionpath({  "enterprise_id": localStorage.EnterpriseId}).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
@@ -468,12 +482,26 @@
 							})
 						})
 						this.terminal_regions = sortingArray;
+						
 
+						// 勾选默认数据 终端
+						if(this.terminalDefaultchecked.length != 0){
+							// 处理数据 取 unique_code 为数组 纯数组 
+							let disArray = this.terminalDefaultchecked;
+							let setCheckedkeyArray = []
+							for(let i = 0; i < disArray.length; i++){
+								setCheckedkeyArray.push(disArray[i].unique_code);
+							}
+							this.$refs.terminaTree.setCheckedKeys(setCheckedkeyArray)
+						}
 					}else{
 						// 错误提示信息
 						this.$message.error(res.data.error_description);
 					}
 				});	
+
+				// 获取 根节点数据 
+				// 获取 默认勾选数据
 			},
 			// 终端 懒加载
 			terminaLoadnode(node, resolve){
@@ -509,6 +537,10 @@
 				}
 			},
 			getTermianloadNode(node,resolve){
+				let _this = this;
+				let _node = node
+
+				let resolveArray = [];
 				// 区分父级节点是否为区域
 				if(node.data.unit_id){
 					//  加载子单位
@@ -524,6 +556,12 @@
 								childArray.map(function(item,inde){	
 									item.isMerge = true;
 								})
+
+								if(_node.checked){
+									childArray.map(function(item,index){
+										_this.terminalDefaultchecked.push(item);
+									});
+								}
 								resolve(childArray);
 								// 勾选默认数据
 								if(this.terminalDefaultchecked.length != 0){
@@ -563,15 +601,28 @@
 							}else{
 								subTerminalarray = []
 							}
-							// 遍历添加标记
+							// 遍历添加标记 单位
 							directArray.map(function(item,index){
 								item.isMerge = true;
 							})
 							//	 合并数组
 							newArry = subTerminalarray.concat(directArray)
+							// 渲染数组集合
+							// 如果 父节点为勾选 则需要将获取的所有子节点 添加到缓存数组中
+							if(_node.checked){
+								newArry.map(function(item,index){
+									_this.terminalDefaultchecked.push(item);
+								});
+							}
 							// 合并渲染tree	
 							resolve(newArry);
-							
+
+							// 反选 
+							let arrayFx = this.setHalfselectedArray(this.terminalDefaultcheckedCopy,newArry);
+							this.$nextTick(() => {
+								this.setHalfselected(arrayFx);
+							})
+
 							// 勾选默认数据
 							if(this.terminalDefaultchecked.length != 0){
 								// 处理数据 取 unique_code 为数组 纯数组 
@@ -593,7 +644,7 @@
 					style="flex: 1; display: flex; align-items: center; justify-content: 
 					space-between; font-size: 14px; padding-right: 8px;">
 					<span>
-						<span style = {{color: (data.isMerge) ? "#57e29b" : "#fff"}}>{node.label}</span>
+						<span class={data.unique_code} style={{color: (data.isMerge) ? "#57e29b" : "#fff"}}>{node.label}</span>
 					</span>
 					<span>
 						</span>
@@ -603,18 +654,37 @@
 			},
 			// 终端勾选 数据监听 
 			termianCheckchangdata(data, type, childState){
-
-				console.log(data);
-
+				console.log(this.terminalDefaultchecked);
 				// terminalDefaultchecked
 				// 选中的数组 默认勾选 直接添加
 				let checkArray = [];
+				let _data = data;
 				checkArray.push(data);
 				
+
 				if(type){
 					//console.log('新增')
-					var newArray = [];
-					this.terminalDefaultchecked.push(data);
+					let clearChildarray = this.terminalDefaultchecked;
+
+					console.log(clearChildarray);
+					// 清除子节点数据 当前节点都为父节点  区域方法
+
+					let currentCode = _data.region_code // 当前节点的 区域 code 字符串 
+
+					clearChildarray.map(function(item,index){
+						if(item.region_full_code){
+							item.region_full_code
+							let splitArray =  item.region_full_code.split('|');
+							if(splitArray.indexOf(currentCode) != -1){
+								clearChildarray.splice(index, 1);
+							}
+						}
+					})
+
+					// 添加当前选中的数据 去重
+					this.terminalDefaultchecked = arrayObjdeweighting(this.terminalDefaultchecked,checkArray,'unique_code')
+
+					console.log(this.terminalDefaultchecked);
 
 				}else{
 					//console.log("删除");
@@ -627,6 +697,8 @@
 						});
 					});
 				}
+				/* console.log('勾选数据');
+				console.log(this.terminalDefaultchecked); */
 			},
 			// 查询
 			findDatalist(){
@@ -658,9 +730,11 @@
 			// 测试权限组成员列表 ajax
 			getEnterpriseusersdata(objData){
 
+				let obj = objData
+
+				console.log(obj);
 				
-				
-				listEnterpriseusers(objData).then(res => {
+				listEnterpriseusers(obj).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
 						this.adminTabledata = res.data.data.list;
 						/* 总条数 */
@@ -720,6 +794,9 @@
 							// 获取 终端默认选项 没有数据处理
 							// 赋值
 							this.terminalDefaultchecked = res.data.data.terminal_regions;
+							this.terminalDefaultcheckedCopy = res.data.data.terminal_regions;
+
+
 							/*  监控 */
 							// 赋值   编辑  监控资源 已经选择的数据
 							this.monitorDefaultchecked = res.data.data.monitor_resource_organizations
@@ -746,19 +823,28 @@
 							}
 
 
+							// 获取 初始化数据
+							let defaultArray = this.terminal_regions;
+							// 获取未处理的数据
+							let defaultCheckedarray = res.data.data.terminal_regions;
+							// 半勾选数组
+							let halfSelectedarray = this.setHalfselectedArray(defaultCheckedarray,defaultArray);
 
-							//console.log(this.terminalDefaultchecked);
-						/* 	// 初始化懒加载tree 信息
-							let child = this.monitorNode
-							child.childNodes = []
+							/* defaultArray.map(function(item,index){
+								let regionCode = item.region_code;
+								defaultCheckedarray.map(function(item2,index2){
+									let splitArray = item2.region_full_code.split('|');
+									if(splitArray.indexOf(regionCode) != -1){
+										halfSelectedarray.push(item)
+									}
+								})
+							}) */
+							//this.setHalfselected(halfSelectedarray)
 
-
-							this.termainNode.childNodes = []
-							// 再次调用 tree 渲染函数
-							this.monitorTherootDirectoryLoadnode(this.monitorNode,this.monitorResolve);
-							this.terminaLoadnode(this.termainNode,this.termainResolve); */
-
-						
+							this.$nextTick(() => {
+								this.setHalfselected(halfSelectedarray)
+							})
+						 
 						}else{
 							this.$message.error(res.data.error_description);
 						}
@@ -831,10 +917,6 @@
 					monitorChangedata = this.monitorDefaultchecked
 				}
 
-				//console.log(monitorChangedata)
-
-				// 验证 监控数据 是否有变化 this.monitorDefaultchecked region_name
-
 				// 遍历 过滤数据 修改为提交数据
 				let monitorCachearray = [];
 				monitorChangedata.map(function(item){
@@ -863,10 +945,10 @@
 				let terminalCacheobj = {}
 
 				
-				// 遍历 过滤数据
+				// 遍历 过滤数据  终端
 				terminalRegions.map(function(item){
-					terminalCacheobj.region_name = item.name;
-					terminalCacheobj.region_code = item.region_code;
+					terminalCacheobj.region_name = item.name ? item.name : item.region_name;
+					terminalCacheobj.region_code = item.area_code ? item.area_code : item.region_code ;
 					terminalCacheobj.unique_code = item.unique_code;
 					// 判断是否为单位 添加  unit_id 字端
 					if(item.isMerge){
@@ -878,6 +960,11 @@
 					terminalCachearray.push(terminalCacheobj);
 					terminalCacheobj = {};
 				})
+
+				// 去重复 有效
+				terminalCachearray = arrayObjdeweighting([],terminalCachearray,'unique_code');
+
+				console.log(terminalCachearray);
 				// 赋值
 				objData.terminal_regions = terminalCachearray ? terminalCachearray : [] ;
 
@@ -889,8 +976,8 @@
 				this.activeName = "first";					// tab 切换为1
 				this.perForm.name = "";						// 企业名称
 				this.permissionsListvalue = [];				// 权限
-				this.$refs.monitorTree.setCheckedKeys([]);	// 监控资源
-				this.$refs.terminaTree.setCheckedKeys([]);	// 终端选择
+				/* this.$refs.monitorTree.setCheckedKeys([]);	// 监控资源
+				this.$refs.terminaTree.setCheckedKeys([]);	// 终端选择 */
 
 				//this.$refs.monitorTree.root.childNodes = []
 
@@ -977,7 +1064,15 @@
 					if (res.status === 200 && res.data.result == "ok") {
 						this.$message.success('删除成功');
 						// 刷新列表数据
-						this.getEnterpriseusersdata();
+						let scope = this.managementMenbersScope
+						//获取 管理成员数据  listEnterpriseusers
+						let objListdata = {
+							"enterprise_group_id" : scope.id, 	// 企业权限组ID（可选）
+							"enterprise_id" : localStorage.EnterpriseId,
+							"page_number": this.adminpage_total_pages - 1,
+							"page_size": 10
+						}
+						this.getEnterpriseusersdata(objListdata);
 
 					}else{
 						// 错误提示信息
@@ -996,7 +1091,53 @@
 				let scope = this.managementMenbersScope;
 				this.managementMembersclick(scope)
 			},
-			/* 分割 */
+			// 返回 半勾选数组  cacheArray  缓存     loadArray 加载
+			setHalfselectedArray(cacheArray,loadArray){
+				// 然后 半勾选数组
+				// 调用 半勾选方法
+				// 获取 初始化数据
+				let defaultArray = loadArray;
+				// 获取 缓存勾选的数组
+				let defaultCheckedarray = cacheArray;
+				// 半勾选数组
+				let halfSelectedarray = [];
+
+				defaultArray.map(function(item,index){
+					let regionCode = item.region_code;
+					defaultCheckedarray.map(function(item2,index2){
+						// 拆分数组 
+						if(item2.region_full_code != undefined){
+							let splitArray =  item2.region_full_code.split('|')
+							// 过滤掉 单位
+							if(!item.isMerge){
+								if(splitArray.indexOf(regionCode) != -1){
+									halfSelectedarray.push(item)
+								}
+							}
+						}else{
+							return false;
+						}
+					
+						
+					})
+				})
+				return halfSelectedarray;
+			},
+			// 半勾选方法 jquery
+			setHalfselected(array){
+				// 去重  
+				let newArray = arrayObjdeweighting([],array,'unique_code');
+				// 遍历添加 class 虚拟 class
+				newArray.map(function(item,index){
+					let $checkBosinput = $('#commonPop').find('.'+item.unique_code).parents('.el-tree-node__content').find('.el-checkbox').find('.el-checkbox__input');
+						
+						if($checkBosinput.hasClass('is-checked')){
+							return false;
+						}else{
+							$checkBosinput.addClass("is-indeterminate")
+						}
+				})
+			}
 		},
 		mounted: function() {
 			let row = '.authorityList'

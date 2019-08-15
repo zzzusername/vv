@@ -347,8 +347,7 @@
 					flag = false;
 					return false
 
-				}else
-				if(this.add.Remark == '') {
+				}else if(this.add.Remark == '') {
 					this.$message({
 						message: '版本更新说明不允许为空',
 						type: 'warning'

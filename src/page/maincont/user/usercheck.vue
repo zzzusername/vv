@@ -53,14 +53,17 @@
 								</template>
 							</el-table-column>
 							<el-table-column prop="event_status_description" label="审核状态"></el-table-column>
+							
 							<el-table-column prop="" label="操作" >
-								<template slot-scope="scope" v-if='scope.row.event_status_description == "待审核"'>
-									<span class="spanBtn" @click="passClick(scope.row,true)">通过</span>
-									<span class="spanBtn" @click="passClick(scope.row,false)">驳回</span>
-									<span class="spanBtn" @click="detailClick(scope.row)">详情</span>
-								</template>
-								<template slot-scope="scope" v-if='scope.row.event_status_description == "驳回"'>
-									<span class="spanBtn" @click="detailClick(scope.row)">详情</span>
+								<template slot-scope="scope">
+									<div v-if='scope.row.event_status == "NEW"'>
+										<span class="spanBtn" @click="passClick(scope.row,true)">通过</span>
+										<span class="spanBtn" @click="passClick(scope.row,false)">驳回</span>
+										<span class="spanBtn" @click="detailClick(scope.row)">详情</span>
+									</div>
+									<div v-else>
+										<span class="spanBtn" @click="detailClick(scope.row)">详情</span>
+									</div>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -188,6 +191,7 @@
 				enterprise_user_name_or_phonenum : '',	// 姓名／手机号
 				region_name : '',	//地区
 				usercheckData : [],
+				userCheckdataTable :[],
 				// 状态数组
 				userCheckstate : [],
 				userCheckstatevalue : '',
@@ -227,17 +231,17 @@
 			}
 		},
 		methods:{
-			// 数据初始化
+			// 数据初始化 table
 			getInitlistData(){
 				let  objData = this.sortingData();
 				applyEventlist(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
 						this.usercheckData = res.data.data.list;
-						// 
+						
 						this.usercheckData.map(function(item,index){
 							item.fixedSort = index - 0 + 1;
 						})
-						
+						console.log(this.usercheckData);
 						/* 总条数 */
 						this.page_total_items = res.data.data.page_total_items; 
 						this.page_total_pages = res.data.data.page_number - 0 + 1;
@@ -283,7 +287,6 @@
 				//  applyEventlistType
 				applyEventlistType({}).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
-						console.log(res);
 						this.userChecktype = res.data.data
 					}
 				});	
@@ -325,6 +328,7 @@
 				applyEventlistEnterprisegroups(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
 						this.listEnterprisegroupsdata = res.data.data
+
 					}
 				});	
 			},

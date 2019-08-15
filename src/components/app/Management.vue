@@ -124,9 +124,9 @@
                 <div class="uploadBg">
                   <div class="filegroup">
                     <form id="uploadForm" enctype="multipart/form-data" style="width:45%; margin-top: 0;">
-                      <input type="file" id="files" name="files" @change="getFile" placeholder="file" multiple   accept=".apk,ipa ">
+                      <input type="file" id="files" name="files" @change="getFile" placeholder="file" multiple   accept=".apk,.ipa ">
                       <span class="btn3">请选择文件</span>
-                      <input type="text" id="file" name="file" readonly multiple  accept=".apk,ipa ">
+                      <input type="text" id="file" name="file" readonly multiple  accept=".apk,.ipa ">
                       <span class="sccess">√</span>
                     </form>
                     <button type="button" class="submit2" value="上传" @click="getUploadVideo">上传</button>
@@ -526,8 +526,8 @@
           </div>
           <div class="userBtn2">
             <el-form-item>
-              <el-button type="primary" @click="appeditbut">保存</el-button>
-              <el-button @click="appeditCancel">取消</el-button>
+            
+              <el-button @click="dialogTabledetails=false">关闭</el-button>
             </el-form-item>
           </div>
         </el-form>
@@ -767,6 +767,7 @@
           type: 'info'
         });
         custom.cancel()
+        this.isbutton=false;
         this.dialogTableVisibleadd = false;
         this.add = {
            version_name: '',//版本名称
@@ -830,7 +831,14 @@
           });
           flag = false;
            return
-        }else{
+        }else if(this.add.Remark == ''){
+            this.$message({
+            message: '版本更新说明不允许为空',
+            type: 'warning'
+          });
+          flag = false;
+           return
+        } else{
            var reg =  /^[1-9]\d*$/;
          if(reg.test(this.add.version_code)!=true) {
 
@@ -915,7 +923,7 @@
 
 
             if (res.status === 200 && res.data.result == "ok") {
-               this.isbutton=false;
+               _this.isbutton=false;
               _this.$message({
                 message: "新增成功",
                 type: 'success'
@@ -934,11 +942,14 @@
                 type: 'warning'
               });
 
+    _this.isbutton=false;
 
             }
 
           }).catch(function (error) {
             console.log(error);
+              
+                _this.isbutton=false;
           });
 
 

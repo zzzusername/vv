@@ -16,8 +16,6 @@
 </template>
 <script>
 import $ from "jquery";
-import videojs from "video.js";
-import "videojs-contrib-hls";
 
 export default {
   data() {

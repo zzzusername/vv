@@ -57,15 +57,15 @@
                 width="40%"
 				id="gisPlatformPop"
 				>
-                <el-form id="localeSelectioncomponent" :model="addForm" ref="edit" label-width="20%" class="demo-ruleForm">
+                <el-form id="localeSelectioncomponent" :model="addForm" ref="edit" label-width="25%" class="demo-ruleForm">
                     <div class="formTable">
                         <div class="block">
-							<el-form-item label="IP和端口："  prop="ip_and_port">
+							<el-form-item label="IP和端口："  prop="ip_and_port" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.ip_and_port" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block" id="areaSelectpopover">
-							<el-form-item label="所属区域："  prop="region_full_name">
+							<el-form-item label="所属区域："  prop="region_full_name" :rules="[{ required: true, message: ' '}]">
 								<el-input 
 								v-model="addForm.region_full_name" 
 								maxlength="50"
@@ -88,22 +88,22 @@
 							</el-form-item>
                         </div>
 						<div class="block">
-							<el-form-item label="GIS名称："  prop="name">
+							<el-form-item label="GIS名称："  prop="name" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.name" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block">
-							<el-form-item label="GIS负责人："  prop="manager_name">
+							<el-form-item label="GIS负责人："  prop="manager_name" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.manager_name" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
 						<div class="block">
-							<el-form-item label="负责人手机号："  prop="manager_phonenum">
+							<el-form-item label="负责人手机号："  prop="manager_phonenum" :rules="[{ required: true, message: ' '}]">
 								<el-input v-model="addForm.manager_phonenum" maxlength="50"></el-input>
 							</el-form-item>
                         </div>
                         <div class="block">
-							<el-form-item label="接入的流媒体："  prop="stream_server_id">
+							<el-form-item label="接入的流媒体："  prop="stream_server_id" :rules="[{ required: true, message: ' '}]">
 								 <el-select v-model="addForm.stream_server_id" placeholder="请选择">
 									<el-option
 									v-for="item in addForm.stream_server_Data"
@@ -132,7 +132,7 @@
     /* 展示弹窗样式文件 */
     import '../../style/common.css' /*引入公共样式*/
 	// js
-	import {heightAuto} from '../../untils/heightAuto' //注意路径
+	import {heightAuto,arrayObjdeweighting} from '../../untils/heightAuto' //注意路径
 	/* api */
 	// gisList 列表
 	// gisAdd 新增
@@ -178,16 +178,7 @@
 					name : '',
 					manager_name : '',
 					manager_phonenum : '',
-					stream_server_Data : [
-						{
-							exclusive: false,
-							id: "1e025341-87de-4896-912e-44ded5776fab",
-							org_code: "110000000000",
-							priority: 999,
-							server_code: "11135436292046327808",
-							server_name: "嘉诚测试(109)",
-						}
-					],
+					stream_server_Data : [],
 					stream_server_id : '',
 					// 地区参数
 					region_name : '',
@@ -237,7 +228,11 @@
 				listEnterprisestreamServers(objData).then(res => {
 					if (res.status === 200 && res.data.result == "ok") {
 						console.log(res);
-						this.addForm.stream_server_Data = res.data.data;
+						let resArray = res.data.data
+						// 渲染数据 去重
+						this.addForm.stream_server_Data = arrayObjdeweighting(resArray,[],'server_code');
+
+						
 					}
 				});	
 			},

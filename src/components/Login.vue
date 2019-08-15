@@ -68,9 +68,9 @@
                   value="登录"
                 />
               </div >
-                 <!-- <div class="passwordbox">
-                  <span class="Forget" @click="Forgetpassword">忘记密码</span>
-                </div> -->
+              <div class="passwordbox">
+                <span class="Forget" @click="Forgetpassword">忘记密码</span>
+              </div>
 
             </div>
           </div>
@@ -79,12 +79,9 @@
           </div>
         </div>
       </div>
-
-
       <div class="Copyright">
         <span class="myversion"></span>
         <p v-text="company"></p>
-
       </div>
   </div>
 
@@ -128,7 +125,6 @@ import {
 
 
 } from "@/components/interface/common.js";
-import crypto from "crypto";
 
 var Codenumder = 1;
 var countdown = 250;
@@ -185,7 +181,7 @@ export default {
     //      this.login_put()
   },
   methods: {
-//    平台初始化
+    //平台初始化
     version() {
       var _this = this
       var time={
@@ -213,13 +209,16 @@ export default {
       })
 
     },
-
-
     //忘记密码
     Forgetpassword(){
-        this.$router.push({
-                path: "/Forgetpassword"
-              });
+      let _this = this;
+     /*  this.$router.push({
+        path: "/Homeapp"
+      }); */
+      this.$router.push({
+        path: "/Forgetpassword"
+      });
+      console.log('忘记密码');
 
     },
     //开始二级登录
@@ -267,7 +266,13 @@ export default {
               _this.$router.push({
                 path: "/Home"
               });
-            }
+            }else if (res.data.result == "error") {
+            _this.$message({
+              message: res.data.error_description,
+              type: "warning"
+            });
+
+           }
           })
           .catch(function(error) {
             console.log(error);
@@ -314,11 +319,21 @@ export default {
               localStorage.setItem("Personparse", personparse);
               localStorage.setItem("realname", personparse.user
 .realname);
-
-              _this.$router.push({
+              // 跳转 企业平台  //  http://localhost:8080/#/Homemain
+              //window.location.href="http://localhost:8080/#/Homemain"
+              /* _this.$router.push({
                 path: "/Homemain"
+              }); */
+              _this.$router.push({
+                path: "/Homeapp"
               });
-            }
+            }else if (res.data.result == "error") {
+            _this.$message({
+              message: res.data.error_description,
+              type: "warning"
+            });
+
+          }
 				});
        /*  this.$http.post(URL + "/admin/api/v1/user/login", userparameter).then(function(res) {
             // _this.reLogin(res.data.code); //提示帐号登陆、
@@ -424,8 +439,7 @@ export default {
             _this.radio=listtype[0]
            console.log(_this.logintypeData);
             _this.typedialogVisible = true;
-          }
-          if (res.data.result == "error") {
+          }else if (res.data.result == "error") {
             _this.$message({
               message: res.data.error_description,
               type: "warning"
@@ -628,7 +642,9 @@ export default {
 }
 .loginForm .Forget:hover {
  color: rgb(148, 219, 171);
-
+}
+.Forget{
+  cursor: pointer;
 }
 /* .logintype{
       position: absolute;
@@ -663,4 +679,6 @@ input:-webkit-autofill {
   position: absolute;
   left: 20px;
 }
+
+
 </style>

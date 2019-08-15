@@ -64,5 +64,32 @@ function toShort(code) {
 }
 export { toShort,splitCode }
 
+// 数组对象去重 Array object deweighting
+/* 
+    n : 数组对象
+    o : 数组对象
+    u ： key
+*/  
+function arrayObjdeweighting(n,o,u) {
+    let json = [...n, ...o]
+    let newJson = []; 
+    let n1,n2 = {};
+    for (n1 of json) {  
+        let flag = true;  
+        for (n2 of newJson) {  
+
+            if (n1[u] == n2[u]) { 
+                flag = false;
+            }
+        }
+        if (flag) { 
+            newJson.push(n1); 
+        }
+    }
+
+    return newJson;
+}
+export { arrayObjdeweighting}
+
 
 
