@@ -23,8 +23,8 @@ import myserver from './script/servers'
 // import meetingserver from './components/meeting/meetingserver'
 
 
-
-
+// 引入 video样式文件
+import 'video.js/dist/video-js.css'
 
 import store from './store'
 
